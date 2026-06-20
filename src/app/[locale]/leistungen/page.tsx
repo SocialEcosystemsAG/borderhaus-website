@@ -3,10 +3,8 @@ import { isLocale, type Locale } from '@/i18n/config';
 import { getDictionary } from '@/i18n';
 import { path } from '@/i18n/routes';
 import { pageMetadata } from '@/lib/seo';
-import { PageHero } from '@/components/ui/PageHero';
-import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { Section } from '@/components/ui/Section';
-import { CtaBand } from '@/components/sections/CtaBand';
+import { PageHero, CreamSection } from '@/components/ui/PageHero';
+import { BreadcrumbJsonLd } from '@/components/seo/JsonLd';
 
 export async function generateMetadata({
   params,
@@ -16,12 +14,7 @@ export async function generateMetadata({
   const { locale } = await params;
   const loc: Locale = isLocale(locale) ? locale : 'de';
   const dict = getDictionary(loc);
-  return pageMetadata({
-    locale: loc,
-    routeKey: 'services',
-    title: dict.pages.services.title,
-    description: dict.pages.services.lead,
-  });
+  return pageMetadata({ locale: loc, routeKey: 'services', title: dict.pages.services.title, description: dict.pages.services.lead });
 }
 
 export default async function ServicesPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -32,7 +25,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
 
   return (
     <>
-      <Breadcrumb
+      <BreadcrumbJsonLd
         items={[
           { name: dict.meta.name, url: path(loc, 'home') },
           { name: dict.nav.services, url: path(loc, 'services') },
@@ -40,19 +33,18 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
       />
       <PageHero eyebrow={dict.nav.services} title={p.title} lead={p.lead} />
 
-      <Section tone="white">
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {p.items.map((item, i) => (
-            <div key={item.title} className="card-light p-7">
-              <span className="font-mono text-sm text-accent">{String(i + 1).padStart(2, '0')}</span>
-              <h3 className="mt-4 text-xl font-semibold">{item.title}</h3>
-              <p className="mt-2 text-canvas/70">{item.body}</p>
+      <CreamSection>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 18 }}>
+          {p.items.map((sv) => (
+            <div key={sv.k} className="bh-cardL" style={{ background: '#fff', border: '1px solid #e6e3dc', borderRadius: 14, padding: 32, boxShadow: '0 1px 0 rgba(0,0,0,.03)' }}>
+              <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 13, color: '#ff4a1c', letterSpacing: '.14em', textTransform: 'uppercase' }}>{sv.k}</div>
+              <h3 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 24, fontWeight: 700, margin: '12px 0 10px' }}>{sv.t}</h3>
+              <p style={{ fontSize: 16, lineHeight: 1.55, color: '#3a3a40', margin: '0 0 12px' }}>{sv.b}</p>
+              <div style={{ fontSize: 14, color: '#6f6f76', borderTop: '1px solid #ece9e1', paddingTop: 12 }}>{sv.d}</div>
             </div>
           ))}
         </div>
-      </Section>
-
-      <CtaBand locale={loc} dict={dict} />
+      </CreamSection>
     </>
   );
 }

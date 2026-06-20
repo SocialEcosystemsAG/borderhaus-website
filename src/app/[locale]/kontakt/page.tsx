@@ -4,11 +4,8 @@ import { isLocale, type Locale } from '@/i18n/config';
 import { getDictionary } from '@/i18n';
 import { path } from '@/i18n/routes';
 import { pageMetadata } from '@/lib/seo';
-import { PageHero } from '@/components/ui/PageHero';
-import { Breadcrumb } from '@/components/ui/Breadcrumb';
-import { Section } from '@/components/ui/Section';
 import { InboundForm } from '@/components/forms/InboundForm';
-import { ORG } from '@/lib/site';
+import { BreadcrumbJsonLd } from '@/components/seo/JsonLd';
 
 export async function generateMetadata({
   params,
@@ -18,49 +15,44 @@ export async function generateMetadata({
   const { locale } = await params;
   const loc: Locale = isLocale(locale) ? locale : 'de';
   const dict = getDictionary(loc);
-  return pageMetadata({
-    locale: loc,
-    routeKey: 'contact',
-    title: dict.pages.contact.title,
-    description: dict.pages.contact.lead,
-  });
+  return pageMetadata({ locale: loc, routeKey: 'contact', title: dict.pages.contact.title, description: dict.pages.contact.lead });
 }
 
 export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const loc: Locale = isLocale(locale) ? locale : 'de';
   const dict = getDictionary(loc);
+  const p = dict.pages.contact;
 
   return (
     <>
-      <Breadcrumb
+      <BreadcrumbJsonLd
         items={[
           { name: dict.meta.name, url: path(loc, 'home') },
           { name: dict.nav.contact, url: path(loc, 'contact') },
         ]}
       />
-      <PageHero eyebrow={dict.nav.contact} title={dict.pages.contact.title} lead={dict.pages.contact.lead} />
+      <section style={{ background: '#f5f3ee', color: '#0b0b0c', padding: 'clamp(48px,7vh,90px) clamp(20px,5vw,80px)' }}>
+        <div className="bh-contact" style={{ maxWidth: 1080, margin: '0 auto' }}>
+          <div>
+            <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 14, letterSpacing: '.2em', textTransform: 'uppercase', color: '#ff4a1c', marginBottom: 18 }}>{p.label}</div>
+            <h1 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(32px,4.4vw,56px)', fontWeight: 700, letterSpacing: '-.03em', margin: '0 0 18px', lineHeight: 1 }}>{p.title}</h1>
+            <p style={{ fontSize: 18, lineHeight: 1.55, color: '#3a3a40', margin: '0 0 30px' }}>{p.lead}</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {p.points.map((cp) => (
+                <div key={cp.n} style={{ display: 'flex', gap: 12, alignItems: 'baseline' }}>
+                  <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 13, color: '#ff4a1c', letterSpacing: '.1em', flex: 'none', width: 22 }}>{cp.n}</span>
+                  <span style={{ fontSize: 16, color: '#3a3a40' }}>{cp.t}</span>
+                </div>
+              ))}
+            </div>
+          </div>
 
-      <Section tone="white">
-        <div className="grid gap-10 lg:grid-cols-[1fr_300px]">
           <Suspense fallback={null}>
             <InboundForm locale={loc} dict={dict} />
           </Suspense>
-          <aside className="space-y-6">
-            <div className="card-light p-6">
-              <h2 className="label-mono">{loc === 'de' ? 'Direkt' : 'Direct'}</h2>
-              <a href={`mailto:${ORG.email}`} className="mt-2 block text-lg font-semibold hover:text-accent">
-                {ORG.email}
-              </a>
-            </div>
-            <div className="card-light p-6 text-sm text-canvas/70">
-              {loc === 'de'
-                ? 'Wir verarbeiten deine Angaben ausschließlich zur Bearbeitung der Anfrage.'
-                : 'We process your details solely to handle your request.'}
-            </div>
-          </aside>
         </div>
-      </Section>
+      </section>
     </>
   );
 }

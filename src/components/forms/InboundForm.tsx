@@ -1,194 +1,194 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Script from 'next/script';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n';
+import { Blitz } from '@/components/brand/Marks';
 
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
 type Status = 'idle' | 'sending' | 'success' | 'error';
 
+const labelStyle: React.CSSProperties = { fontSize: 13, color: '#bcbcbf', display: 'block', marginBottom: 6 };
+const errStyle: React.CSSProperties = { color: '#ff6b45', fontSize: 12, marginTop: 5 };
+
+// Inbound-Formular exakt nach Design-Vorlage (dunkle Karte), plus Brief-Pflichten:
+// Honeypot, optionales Cloudflare Turnstile, Validierung, API-Versand.
 export function InboundForm({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const f = dict.form;
   const params = useSearchParams();
   const [status, setStatus] = useState<Status>('idle');
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const formRef = useRef<HTMLFormElement>(null);
+  const [errors, setErrors] = useState<{ brand?: boolean; email?: boolean; consent?: boolean }>({});
 
-  // Vorbefuellung aus dem Preisrechner.
-  const [prefillMessage, setPrefillMessage] = useState('');
+  const [form, setForm] = useState({
+    brand: '',
+    shop: 'shopify',
+    volume: '',
+    markets: '',
+    current: '',
+    start: '',
+    email: '',
+    message: '',
+    consent: false,
+    company_website: '', // Honeypot
+  });
+
+  const set = (patch: Partial<typeof form>) => setForm((p) => ({ ...p, ...patch }));
+
   useEffect(() => {
     if (params.get('from') === 'calculator') {
-      const lines =
-        locale === 'de'
-          ? [
-              'Anfrage aus dem Preisrechner:',
-              `Bestellungen/Monat: ${params.get('orders') ?? ''}`,
-              `Picks/Bestellung: ${params.get('picks') ?? ''}`,
-              `Lagerbedarf (Paletten): ${params.get('pallets') ?? ''}`,
-              `Zielmärkte: ${params.get('markets') ?? ''}`,
-              `Gewichtsklasse: ${params.get('weight') ?? ''}`,
-              `Retourenquote: ${params.get('returns') ?? ''}`,
-              `Mehrwertservices: ${params.get('services') || '-'}`,
-            ]
-          : [
-              'Request from the price calculator:',
-              `Orders/month: ${params.get('orders') ?? ''}`,
-              `Picks/order: ${params.get('picks') ?? ''}`,
-              `Storage (pallets): ${params.get('pallets') ?? ''}`,
-              `Target markets: ${params.get('markets') ?? ''}`,
-              `Weight class: ${params.get('weight') ?? ''}`,
-              `Return rate: ${params.get('returns') ?? ''}`,
-              `Value-added services: ${params.get('services') || '-'}`,
-            ];
-      setPrefillMessage(lines.join('\n'));
+      const msg = params.get('message');
+      if (msg) setForm((p) => ({ ...p, message: msg }));
     }
-  }, [params, locale]);
+  }, [params]);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const data = new FormData(form);
-
-    const nextErrors: Record<string, string> = {};
-    if (!String(data.get('brand') || '').trim()) nextErrors.brand = f.required;
-    const email = String(data.get('email') || '').trim();
-    if (!email) nextErrors.email = f.required;
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) nextErrors.email = f.invalidEmail;
-    if (!String(data.get('name') || '').trim()) nextErrors.name = f.required;
-    if (!data.get('consent')) nextErrors.consent = f.consentRequired;
-
+  async function submit() {
+    const nextErrors: typeof errors = {};
+    if (!form.brand.trim()) nextErrors.brand = true;
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) nextErrors.email = true;
+    if (!form.consent) nextErrors.consent = true;
     setErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0) return;
+    if (Object.keys(nextErrors).length) return;
 
     setStatus('sending');
     try {
-      const payload = Object.fromEntries(data.entries());
+      const token =
+        typeof document !== 'undefined'
+          ? (document.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement | null)?.value
+          : undefined;
       const res = await fetch('/api/lead', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...payload, locale }),
+        body: JSON.stringify({
+          brand: form.brand,
+          shopSystem: form.shop,
+          volume: form.volume,
+          markets: form.markets,
+          currentLogistics: form.current,
+          desiredStart: form.start,
+          email: form.email,
+          message: form.message,
+          name: form.brand,
+          consent: form.consent ? 'yes' : '',
+          company_website: form.company_website,
+          'cf-turnstile-response': token,
+          locale,
+        }),
       });
-      if (!res.ok) throw new Error('request failed');
+      if (!res.ok) throw new Error('failed');
       setStatus('success');
-      form.reset();
     } catch {
       setStatus('error');
     }
   }
 
+  const cardStyle: React.CSSProperties = {
+    background: '#141417',
+    color: '#f5f3ee',
+    border: '1px solid #26262a',
+    borderRadius: 16,
+    padding: 'clamp(24px,3vw,38px)',
+  };
+
   if (status === 'success') {
     return (
-      <div className="card-light border-accent/40 p-8" role="status">
-        <h3 className="text-2xl font-semibold">{f.successHeading}</h3>
-        <p className="mt-3 text-canvas/70">{f.successBody}</p>
+      <div style={cardStyle} role="status">
+        <div style={{ textAlign: 'center', padding: '40px 10px' }}>
+          <div style={{ width: 64, height: 64, margin: '0 auto 20px' }}>
+            <Blitz size={64} glow={false} />
+          </div>
+          <h3 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 26, fontWeight: 700, margin: '0 0 10px' }}>{f.sentT}</h3>
+          <p style={{ fontSize: 16, color: '#dcdbd9', margin: 0 }}>{f.sentB}</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} className="card-light space-y-5 p-7" noValidate>
-      {TURNSTILE_SITE_KEY && (
-        <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="lazyOnload" />
-      )}
+    <div style={cardStyle}>
+      {TURNSTILE_SITE_KEY && <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="lazyOnload" />}
 
-      {/* Honeypot: fuer Menschen unsichtbar. */}
-      <div className="hidden" aria-hidden="true">
-        <label htmlFor="company_website">Do not fill</label>
-        <input id="company_website" name="company_website" type="text" tabIndex={-1} autoComplete="off" />
-      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        {/* Honeypot, für Menschen unsichtbar. */}
+        <div style={{ position: 'absolute', left: '-9999px' }} aria-hidden="true">
+          <label htmlFor="company_website">Do not fill</label>
+          <input id="company_website" name="company_website" tabIndex={-1} autoComplete="off" value={form.company_website} onChange={(e) => set({ company_website: e.target.value })} />
+        </div>
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <Field label={f.fields.brand} name="brand" placeholder={f.placeholders.brand} required error={errors.brand} />
-        <Field label={f.fields.shopSystem} name="shopSystem" placeholder={f.placeholders.shopSystem} />
-        <Field label={f.fields.volume} name="volume" placeholder={f.placeholders.volume} />
-        <Field label={f.fields.markets} name="markets" placeholder="DE, NL" />
-        <Field
-          label={f.fields.currentLogistics}
-          name="currentLogistics"
-          placeholder={f.placeholders.currentLogistics}
-        />
-        <Field label={f.fields.desiredStart} name="desiredStart" type="month" />
-      </div>
+        <div className="bh-form2">
+          <div>
+            <label style={labelStyle} htmlFor="brand">{f.brand}</label>
+            <input id="brand" className="bh-in" value={form.brand} onChange={(e) => set({ brand: e.target.value })} placeholder={f.brandP} />
+            {errors.brand && <div style={errStyle}>{f.req}</div>}
+          </div>
+          <div>
+            <label style={labelStyle} htmlFor="shop">{f.shop}</label>
+            <select id="shop" className="bh-in" value={form.shop} onChange={(e) => set({ shop: e.target.value })}>
+              <option value="shopify">Shopify</option>
+              <option value="woocommerce">WooCommerce</option>
+              <option value="other">{f.other}</option>
+            </select>
+          </div>
+        </div>
 
-      <div>
-        <label className="label-mono mb-2 block" htmlFor="message">
-          {f.fields.message}
+        <div className="bh-form2">
+          <div>
+            <label style={labelStyle} htmlFor="volume">{f.volume}</label>
+            <input id="volume" className="bh-in" value={form.volume} onChange={(e) => set({ volume: e.target.value })} placeholder={f.volumeP} />
+          </div>
+          <div>
+            <label style={labelStyle} htmlFor="markets">{f.markets}</label>
+            <input id="markets" className="bh-in" value={form.markets} onChange={(e) => set({ markets: e.target.value })} placeholder={f.marketsP} />
+          </div>
+        </div>
+
+        <div className="bh-form2">
+          <div>
+            <label style={labelStyle} htmlFor="current">{f.current}</label>
+            <input id="current" className="bh-in" value={form.current} onChange={(e) => set({ current: e.target.value })} placeholder={f.currentP} />
+          </div>
+          <div>
+            <label style={labelStyle} htmlFor="start">{f.start}</label>
+            <input id="start" className="bh-in" value={form.start} onChange={(e) => set({ start: e.target.value })} placeholder={f.startP} />
+          </div>
+        </div>
+
+        <div>
+          <label style={labelStyle} htmlFor="email">{f.email}</label>
+          <input id="email" className="bh-in" type="email" value={form.email} onChange={(e) => set({ email: e.target.value })} placeholder={f.emailP} />
+          {errors.email && <div style={errStyle}>{f.emailErr}</div>}
+        </div>
+
+        <div>
+          <label style={labelStyle} htmlFor="message">{f.message}</label>
+          <textarea id="message" className="bh-in" rows={3} value={form.message} onChange={(e) => set({ message: e.target.value })} placeholder={f.messageP} />
+        </div>
+
+        <label style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontSize: 13, color: '#bcbcbf', cursor: 'pointer' }}>
+          <input type="checkbox" checked={form.consent} onChange={(e) => set({ consent: e.target.checked })} style={{ marginTop: 3, accentColor: '#ff4a1c' }} />
+          <span>{f.consent}</span>
         </label>
-        <textarea
-          id="message"
-          name="message"
-          rows={5}
-          defaultValue={prefillMessage}
-          placeholder={f.placeholders.message}
-          className="w-full rounded-lg border border-canvas/15 bg-cream px-4 py-2.5 text-canvas focus:border-accent"
-        />
-      </div>
+        {errors.consent && <div style={errStyle}>{f.consentErr}</div>}
 
-      <div className="grid gap-5 sm:grid-cols-3">
-        <Field label={f.fields.name} name="name" required error={errors.name} />
-        <Field label={f.fields.email} name="email" type="email" required error={errors.email} />
-        <Field label={f.fields.phone} name="phone" type="tel" />
-      </div>
+        {TURNSTILE_SITE_KEY && <div className="cf-turnstile" data-sitekey={TURNSTILE_SITE_KEY} />}
 
-      <label className="flex items-start gap-3 text-sm text-canvas/70">
-        <input type="checkbox" name="consent" value="yes" className="mt-1 accent-accent" />
-        <span>
-          {f.fields.consent}
-          {errors.consent && <span className="mt-1 block text-accent">{errors.consent}</span>}
-        </span>
-      </label>
-
-      {TURNSTILE_SITE_KEY && (
-        <div className="cf-turnstile" data-sitekey={TURNSTILE_SITE_KEY} />
-      )}
-
-      <div className="flex flex-wrap items-center gap-4">
-        <button type="submit" className="btn-primary" disabled={status === 'sending'}>
+        <button
+          type="button"
+          onClick={submit}
+          disabled={status === 'sending'}
+          className="bh-cta"
+          style={{ textAlign: 'center', background: '#ff4a1c', color: '#0b0b0c', fontWeight: 700, fontSize: 16, padding: 15, borderRadius: 10, border: 'none', cursor: 'pointer' }}
+        >
           {status === 'sending' ? f.sending : f.submit}
         </button>
         {status === 'error' && (
-          <p className="text-sm text-accent" role="alert">
+          <p style={errStyle} role="alert">
             {f.errorHeading} {f.errorBody}
           </p>
         )}
       </div>
-    </form>
-  );
-}
-
-function Field({
-  label,
-  name,
-  type = 'text',
-  placeholder,
-  required,
-  error,
-}: {
-  label: string;
-  name: string;
-  type?: string;
-  placeholder?: string;
-  required?: boolean;
-  error?: string;
-}) {
-  return (
-    <div>
-      <label className="label-mono mb-2 block" htmlFor={name}>
-        {label}
-        {required && <span className="text-accent"> *</span>}
-      </label>
-      <input
-        id={name}
-        name={name}
-        type={type}
-        placeholder={placeholder}
-        aria-invalid={error ? 'true' : undefined}
-        className="w-full rounded-lg border border-canvas/15 bg-cream px-4 py-2.5 text-canvas focus:border-accent"
-      />
-      {error && <p className="mt-1 text-sm text-accent">{error}</p>}
     </div>
   );
 }

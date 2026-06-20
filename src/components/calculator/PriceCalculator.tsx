@@ -5,236 +5,135 @@ import { useRouter } from 'next/navigation';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n';
 import { path } from '@/i18n/routes';
-import {
-  calculate,
-  formatCurrency,
-  type CalculatorInput,
-  type MarketKey,
-  type WeightKey,
-  type ValueServiceKey,
-} from '@/lib/pricing';
+import { compute, fmt, DEFAULT_STATE, type CalculatorState, type WeightKey } from '@/lib/pricing';
 
-const MARKETS: MarketKey[] = ['de', 'nl', 'eu'];
-const WEIGHTS: WeightKey[] = ['light', 'medium', 'heavy'];
-const SERVICES: ValueServiceKey[] = ['branding', 'bundling', 'giftwrap'];
+// Preisrechner-Island exakt nach Borderhaus_Homepage_v2.html (dunkle Panels).
+const chip = (active: boolean): React.CSSProperties =>
+  active
+    ? { background: '#ff4a1c', color: '#0b0b0c', fontWeight: 700, border: '1px solid #ff4a1c' }
+    : { background: '#0b0b0c', color: '#bcbcbf', border: '1px solid #3a3a40' };
 
 export function PriceCalculator({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const c = dict.calculator;
-  const [input, setInput] = useState<CalculatorInput>({
-    ordersPerMonth: 1000,
-    picksPerOrder: 2,
-    pallets: 5,
-    markets: ['de', 'nl'],
-    weight: 'light',
-    returnRate: 0.05,
-    valueServices: [],
-  });
-
-  const result = useMemo(() => calculate(input), [input]);
+  const [s, setS] = useState<CalculatorState>(DEFAULT_STATE);
+  const r = useMemo(() => compute(s), [s]);
   const router = useRouter();
 
-  function toggleMarket(m: MarketKey) {
-    setInput((prev) => ({
-      ...prev,
-      markets: prev.markets.includes(m)
-        ? prev.markets.filter((x) => x !== m)
-        : [...prev.markets, m],
-    }));
-  }
-
-  function toggleService(s: ValueServiceKey) {
-    setInput((prev) => ({
-      ...prev,
-      valueServices: prev.valueServices.includes(s)
-        ? prev.valueServices.filter((x) => x !== s)
-        : [...prev.valueServices, s],
-    }));
-  }
+  const set = (patch: Partial<CalculatorState>) => setS((prev) => ({ ...prev, ...patch }));
+  const ordersFmt = s.orders.toLocaleString(locale === 'de' ? 'de-DE' : 'en-US');
 
   function requestQuote() {
-    // Eingaben an das Inbound-Formular durchreichen (Query-Params).
-    const params = new URLSearchParams({
-      from: 'calculator',
-      orders: String(input.ordersPerMonth),
-      picks: String(input.picksPerOrder),
-      pallets: String(input.pallets),
-      markets: input.markets.join(','),
-      weight: input.weight,
-      returns: String(input.returnRate),
-      services: input.valueServices.join(','),
-    });
+    const de = locale === 'de';
+    const markets = [s.de ? 'DE' : null, s.nl ? 'NL' : null, s.eu ? 'EU' : null].filter(Boolean).join('/');
+    const summary =
+      (de ? 'Anfrage aus dem Preisrechner: ' : 'Request from the price calculator: ') +
+      s.orders +
+      (de ? ' Bestellungen/Monat, ' : ' orders/month, ') +
+      s.picks +
+      (de ? ' Artikel/Bestellung, ' : ' items/order, ') +
+      (de ? 'Märkte ' : 'markets ') +
+      markets +
+      '. ' +
+      (de ? 'Geschätzt ' : 'Estimated ') +
+      fmt(r.low) +
+      '–' +
+      fmt(r.high) +
+      (de ? '/Monat.' : '/month.');
+    const params = new URLSearchParams({ from: 'calculator', message: summary });
     router.push(`${path(locale, 'contact')}?${params.toString()}`);
   }
 
-  const fmt = (v: number) => formatCurrency(v, result.currency, locale);
+  const chipBase: React.CSSProperties = { cursor: 'pointer', fontSize: 14, padding: '9px 16px', borderRadius: 8 };
+  const labelStyle: React.CSSProperties = { fontSize: 15, fontWeight: 600 };
+  const valStyle: React.CSSProperties = { fontFamily: "'Space Mono', monospace", color: '#ff4a1c', fontWeight: 700 };
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_minmax(320px,400px)]">
-      {/* Eingaben auf hellem Grund. */}
-      <div className="card-light space-y-6 p-7">
-        <NumberField
-          label={c.inputs.orders}
-          value={input.ordersPerMonth}
-          min={0}
-          step={50}
-          onChange={(v) => setInput((p) => ({ ...p, ordersPerMonth: v }))}
-        />
-        <NumberField
-          label={c.inputs.picks}
-          value={input.picksPerOrder}
-          min={1}
-          step={1}
-          onChange={(v) => setInput((p) => ({ ...p, picksPerOrder: v }))}
-        />
-        <NumberField
-          label={c.inputs.storage}
-          value={input.pallets}
-          min={0}
-          step={1}
-          onChange={(v) => setInput((p) => ({ ...p, pallets: v }))}
-        />
-
-        <fieldset>
-          <legend className="label-mono mb-2">{c.inputs.markets}</legend>
-          <div className="flex flex-wrap gap-2">
-            {MARKETS.map((m) => (
-              <Chip key={m} active={input.markets.includes(m)} onClick={() => toggleMarket(m)}>
-                {c.markets[m]}
-              </Chip>
-            ))}
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend className="label-mono mb-2">{c.inputs.weight}</legend>
-          <div className="flex flex-wrap gap-2">
-            {WEIGHTS.map((w) => (
-              <Chip
-                key={w}
-                active={input.weight === w}
-                onClick={() => setInput((p) => ({ ...p, weight: w }))}
-              >
-                {c.weights[w]}
-              </Chip>
-            ))}
-          </div>
-        </fieldset>
+    <div className="bh-calc">
+      {/* Eingaben dunkel */}
+      <div style={{ background: '#141417', color: '#f5f3ee', border: '1px solid #26262a', borderRadius: 16, padding: 'clamp(24px,3vw,38px)', display: 'flex', flexDirection: 'column', gap: 26 }}>
+        <Slider label={c.cOrders} value={<span style={valStyle}>{ordersFmt}</span>}>
+          <input className="bh-range" type="range" min={100} max={50000} step={100} value={s.orders} onChange={(e) => set({ orders: parseInt(e.target.value, 10) })} />
+        </Slider>
+        <Slider label={c.cPicks} value={<span style={valStyle}>{s.picks}</span>}>
+          <input className="bh-range" type="range" min={1} max={10} step={1} value={s.picks} onChange={(e) => set({ picks: parseInt(e.target.value, 10) })} />
+        </Slider>
+        <Slider label={c.cStorage} value={<span style={valStyle}>{s.storage}</span>}>
+          <input className="bh-range" type="range" min={1} max={200} step={1} value={s.storage} onChange={(e) => set({ storage: parseInt(e.target.value, 10) })} />
+        </Slider>
 
         <div>
-          <label className="label-mono mb-2 block" htmlFor="returns">
-            {c.inputs.returns}: {Math.round(input.returnRate * 100)}%
-          </label>
-          <input
-            id="returns"
-            type="range"
-            min={0}
-            max={50}
-            step={1}
-            value={Math.round(input.returnRate * 100)}
-            onChange={(e) => setInput((p) => ({ ...p, returnRate: Number(e.target.value) / 100 }))}
-            className="w-full accent-accent"
-          />
+          <label style={{ ...labelStyle, display: 'block', marginBottom: 12 }}>{c.cMarkets}</label>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <span onClick={() => set({ de: !s.de })} style={{ ...chipBase, fontFamily: "'Space Mono', monospace", ...chip(s.de) }}>DE</span>
+            <span onClick={() => set({ nl: !s.nl })} style={{ ...chipBase, fontFamily: "'Space Mono', monospace", ...chip(s.nl) }}>NL</span>
+            <span onClick={() => set({ eu: !s.eu })} style={{ ...chipBase, fontFamily: "'Space Mono', monospace", ...chip(s.eu) }}>EU</span>
+          </div>
         </div>
 
-        <fieldset>
-          <legend className="label-mono mb-2">{c.inputs.services}</legend>
-          <div className="flex flex-wrap gap-2">
-            {SERVICES.map((s) => (
-              <Chip key={s} active={input.valueServices.includes(s)} onClick={() => toggleService(s)}>
-                {c.valueServices[s]}
-              </Chip>
+        <div>
+          <label style={{ ...labelStyle, display: 'block', marginBottom: 12 }}>{c.cWeight}</label>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            {(['s', 'm', 'l'] as WeightKey[]).map((w) => (
+              <span key={w} onClick={() => set({ weight: w })} style={{ ...chipBase, ...chip(s.weight === w) }}>
+                {w === 's' ? c.cwS : w === 'm' ? c.cwM : c.cwL}
+              </span>
             ))}
           </div>
-        </fieldset>
+        </div>
+
+        <Slider label={c.cReturns} value={<span style={valStyle}>{s.returns}&thinsp;%</span>}>
+          <input className="bh-range" type="range" min={0} max={40} step={1} value={s.returns} onChange={(e) => set({ returns: parseInt(e.target.value, 10) })} />
+        </Slider>
+
+        <div>
+          <label style={{ ...labelStyle, display: 'block', marginBottom: 12 }}>{c.cServices}</label>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+            <span onClick={() => set({ kitting: !s.kitting })} style={{ ...chipBase, ...chip(s.kitting) }}>{c.cKitting}</span>
+            <span onClick={() => set({ bundles: !s.bundles })} style={{ ...chipBase, ...chip(s.bundles) }}>{c.cBundles}</span>
+          </div>
+        </div>
       </div>
 
-      {/* Ausgabe als dunkle Feature-Karte (Kontrast-Anker). */}
-      <div className="card-dark h-fit space-y-5 bg-panel p-7 lg:sticky lg:top-24">
-        <div>
-          <p className="label-mono text-accent-2">{c.estimateNote}</p>
-          <h3 className="mt-1 text-lg font-semibold text-cream">{c.heading}</h3>
+      {/* Ergebnis dunkel, sticky */}
+      <div style={{ position: 'sticky', top: 90, color: '#f5f3ee', background: 'linear-gradient(180deg,#16171c,#0e0e10)', border: '1px solid #2a2b30', borderRadius: 16, padding: 'clamp(24px,3vw,34px)' }}>
+        <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 13, letterSpacing: '.16em', textTransform: 'uppercase', color: '#7d7d84' }}>{c.cResultLabel}</div>
+        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(30px,4vw,46px)', fontWeight: 700, lineHeight: 1.05, margin: '10px 0 4px' }}>
+          {fmt(r.low)} <span style={{ color: '#7d7d84' }}>&ndash;</span> {fmt(r.high)}
         </div>
-
-        <p className="font-display text-3xl font-bold text-cream">
-          {fmt(result.min.total)} <span className="text-muted">–</span> {fmt(result.max.total)}
-          <span className="block text-sm font-normal text-grey-300">{c.perMonth}</span>
-        </p>
-
-        <dl className="space-y-2 border-t border-border pt-4 text-sm">
-          <Row label={c.breakdown.storage} value={`${fmt(result.min.storage)} – ${fmt(result.max.storage)}`} />
-          <Row label={c.breakdown.pickpack} value={`${fmt(result.min.pickpack)} – ${fmt(result.max.pickpack)}`} />
-          <Row label={c.breakdown.shipping} value={`${fmt(result.min.shipping)} – ${fmt(result.max.shipping)}`} />
-          <Row label={c.breakdown.returns} value={`${fmt(result.min.returns)} – ${fmt(result.max.returns)}`} />
-        </dl>
-
-        <button type="button" className="btn-primary w-full" onClick={requestQuote}>
-          {dict.cta.requestQuote}
+        <div style={{ fontSize: 14, color: '#7d7d84', marginBottom: 22 }}>{c.cPerMonth}</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, borderTop: '1px solid #26262a', paddingTop: 20 }}>
+          <Row label={c.cBreakStorage} value={fmt(r.storage)} />
+          <Row label={c.cBreakPick} value={fmt(r.pick)} />
+          <Row label={c.cBreakShip} value={fmt(r.ship)} />
+          <Row label={c.cBreakReturns} value={fmt(r.ret)} />
+          {r.hasSvc && <Row label={c.cBreakServices} value={fmt(r.svc)} />}
+        </div>
+        <button type="button" onClick={requestQuote} className="bh-cta" style={{ display: 'block', width: '100%', textAlign: 'center', marginTop: 24, background: '#ff4a1c', color: '#0b0b0c', fontWeight: 700, fontSize: 16, padding: 14, borderRadius: 10, border: 'none', cursor: 'pointer' }}>
+          {c.cQuote}
         </button>
-        <p className="text-xs text-muted">{c.handoff}</p>
+        <p style={{ fontSize: 12, lineHeight: 1.45, color: '#6b6b71', margin: '16px 0 0' }}>{dict.pages.pricing.disclaimer}</p>
       </div>
     </div>
   );
 }
 
-function NumberField({
-  label,
-  value,
-  min,
-  step,
-  onChange,
-}: {
-  label: string;
-  value: number;
-  min: number;
-  step: number;
-  onChange: (v: number) => void;
-}) {
+function Slider({ label, value, children }: { label: string; value: React.ReactNode; children: React.ReactNode }) {
   return (
     <div>
-      <label className="label-mono mb-2 block">{label}</label>
-      <input
-        type="number"
-        inputMode="numeric"
-        min={min}
-        step={step}
-        value={value}
-        onChange={(e) => onChange(Math.max(min, Number(e.target.value) || 0))}
-        className="w-full rounded-lg border border-canvas/15 bg-cream px-4 py-2.5 text-canvas focus:border-accent"
-      />
-    </div>
-  );
-}
-
-function Chip({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      aria-pressed={active}
-      onClick={onClick}
-      className={`rounded-full border px-4 py-2 text-sm transition-colors ${
-        active
-          ? 'border-accent bg-accent text-cream'
-          : 'border-canvas/20 bg-white text-canvas hover:border-accent'
-      }`}
-    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+        <label style={{ fontSize: 15, fontWeight: 600 }}>{label}</label>
+        {value}
+      </div>
       {children}
-    </button>
+    </div>
   );
 }
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between gap-4">
-      <dt className="text-grey-300">{label}</dt>
-      <dd className="text-cream">{value}</dd>
+    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 15 }}>
+      <span style={{ color: '#bcbcbf' }}>{label}</span>
+      <span style={{ fontFamily: "'Space Mono', monospace" }}>{value}</span>
     </div>
   );
 }

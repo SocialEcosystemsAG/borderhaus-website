@@ -1,89 +1,69 @@
 import config from '@/config/pricing.json';
 
-export type MarketKey = 'de' | 'nl' | 'eu';
-export type WeightKey = 'light' | 'medium' | 'heavy';
-export type ValueServiceKey = 'branding' | 'bundling' | 'giftwrap';
+export type WeightKey = 's' | 'm' | 'l';
 
-export interface CalculatorInput {
-  ordersPerMonth: number;
-  picksPerOrder: number;
-  pallets: number;
-  markets: MarketKey[];
+// Eingabezustand exakt wie in der Design-Vorlage (Borderhaus_Homepage_v2.html).
+export interface CalculatorState {
+  orders: number;
+  picks: number;
+  storage: number; // Stellplätze
+  de: boolean;
+  nl: boolean;
+  eu: boolean;
   weight: WeightKey;
-  returnRate: number; // 0..1
-  valueServices: ValueServiceKey[];
-}
-
-export interface CostBreakdown {
-  storage: number;
-  pickpack: number;
-  shipping: number;
-  returns: number;
-  total: number;
+  returns: number; // Prozent 0..40
+  kitting: boolean;
+  bundles: boolean;
 }
 
 export interface CalculatorResult {
-  min: CostBreakdown;
-  max: CostBreakdown;
-  currency: string;
+  storage: number;
+  pick: number;
+  ship: number;
+  ret: number;
+  svc: number;
+  low: number;
+  high: number;
+  hasSvc: boolean;
 }
 
-// Indikative Monatskosten aus der Konfig. Keine Tarife hart verdrahtet.
-function baseBreakdown(input: CalculatorInput): CostBreakdown {
-  const orders = Math.max(0, input.ordersPerMonth);
-  const picks = Math.max(1, input.picksPerOrder);
+export const DEFAULT_STATE: CalculatorState = {
+  orders: 5000,
+  picks: 2,
+  storage: 20,
+  de: true,
+  nl: true,
+  eu: false,
+  weight: 'm',
+  returns: 8,
+  kitting: false,
+  bundles: false,
+};
 
-  const storage = input.pallets * config.storage.perPalletPerMonth;
-
-  const valueServicePerOrder = input.valueServices.reduce(
-    (sum, key) => sum + (config.pickPack.valueServicePerOrder[key] ?? 0),
-    0,
-  );
-  const pickpack =
-    orders * (config.pickPack.baseOrder + picks * config.pickPack.perPick + valueServicePerOrder);
-
-  // Bestellungen gleichmaessig auf gewaehlte Maerkte verteilt.
-  const markets = input.markets.length ? input.markets : (['de'] as MarketKey[]);
-  const ordersPerMarket = orders / markets.length;
-  const weightSurcharge = config.shipping.weightSurcharge[input.weight] ?? 0;
-  const shipping = markets.reduce((sum, market) => {
-    const rate = config.shipping.perOrderByMarket[market] ?? 0;
-    return sum + ordersPerMarket * (rate + weightSurcharge);
-  }, 0);
-
-  const returns = orders * clamp(input.returnRate, 0, 1) * config.returns.perReturn;
-
-  const total = storage + pickpack + shipping + returns;
-  return { storage, pickpack, shipping, returns, total };
-}
-
-function scale(b: CostBreakdown, factor: number): CostBreakdown {
+// Berechnung 1:1 zur Vorlage, Tarife aus der Konfig (nicht hart verdrahtet).
+export function compute(c: CalculatorState): CalculatorResult {
+  const storage = c.storage * config.storagePerUnitPerDay * config.daysPerMonth;
+  const pick = c.orders * (config.pickFirst + Math.max(0, c.picks - 1) * config.pickAdd);
+  const mult = c.eu ? config.marketMult.eu : c.nl ? config.marketMult.nl : config.marketMult.de;
+  const ship = c.orders * config.ship[c.weight] * mult;
+  const ret = c.orders * (c.returns / 100) * config.returnHandling;
+  let svc = 0;
+  if (c.kitting) svc += c.orders * config.services.kitting;
+  if (c.bundles) svc += c.orders * config.services.bundles;
+  const sub = storage + pick + ship + ret + svc;
   return {
-    storage: b.storage * factor,
-    pickpack: b.pickpack * factor,
-    shipping: b.shipping * factor,
-    returns: b.returns * factor,
-    total: b.total * factor,
+    storage,
+    pick,
+    ship,
+    ret,
+    svc,
+    low: sub * config.range.low,
+    high: sub * config.range.high,
+    hasSvc: c.kitting || c.bundles,
   };
 }
 
-function clamp(v: number, lo: number, hi: number): number {
-  return Math.min(hi, Math.max(lo, v));
-}
-
-export function calculate(input: CalculatorInput): CalculatorResult {
-  const base = baseBreakdown(input);
-  return {
-    min: scale(base, config.rangeFactor.min),
-    max: scale(base, config.rangeFactor.max),
-    currency: config.currency,
-  };
-}
-
-export function formatCurrency(value: number, currency: string, locale: string): string {
-  return new Intl.NumberFormat(locale === 'de' ? 'de-DE' : 'en-IE', {
-    style: 'currency',
-    currency,
-    maximumFractionDigits: 0,
-  }).format(value);
+// Formatierung exakt wie Vorlage: gerundet auf 10er, ohne Tausenderpunkt.
+export function fmt(n: number): string {
+  return '€' + Math.round(n / 10) * 10;
 }
