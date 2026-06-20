@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-canvas: #0b0b0c;
+  --color-cream: #f5f3ee;
+  --color-accent: #ff4a1c;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-cream font-body text-canvas antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display font-semibold tracking-tight;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    @apply bg-accent text-cream;
+  }
+
+  /* Sichtbarer Fokus-Ring fuer Tastatur-Navigation (WCAG AA). */
+  :focus-visible {
+    @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-cream;
+  }
+}
+
+@layer components {
+  .container-bh {
+    @apply mx-auto w-full max-w-content px-5 sm:px-6 lg:px-8;
+  }
+
+  /* Mono-Label im CI-Stil: Versalien, gesperrt, klein. */
+  .label-mono {
+    @apply font-mono text-xs uppercase tracking-[0.18em] text-muted;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-body text-sm font-semibold transition-colors duration-200 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-primary {
+    @apply btn bg-accent text-cream hover:bg-[#e23c12];
+  }
+
+  .btn-secondary {
+    @apply btn border border-canvas/20 bg-transparent text-canvas hover:bg-canvas hover:text-cream;
+  }
+
+  .btn-on-dark {
+    @apply btn border border-cream/25 bg-transparent text-cream hover:bg-cream hover:text-canvas;
+  }
+
+  /* Dunkle Feature-Karte als gezielter Kontrast-Anker auf hellem Grund. */
+  .card-dark {
+    @apply rounded-2xl border border-border bg-panel text-cream;
+  }
+
+  .card-light {
+    @apply rounded-2xl border border-canvas/10 bg-white text-canvas;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

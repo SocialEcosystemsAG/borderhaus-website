@@ -1,0 +1,32 @@
+{
+  "currency": "EUR",
+  "_note": "PLATZHALTER-TARIFE. Echte Werte und Logik liefert Marcel. Beträge in EUR, Spanne über min/max-Faktor.",
+  "rangeFactor": { "min": 0.85, "max": 1.2 },
+  "storage": {
+    "perPalletPerMonth": 18.0
+  },
+  "pickPack": {
+    "baseOrder": 1.4,
+    "perPick": 0.35,
+    "valueServicePerOrder": {
+      "branding": 0.4,
+      "bundling": 0.6,
+      "giftwrap": 0.9
+    }
+  },
+  "shipping": {
+    "perOrderByMarket": {
+      "de": 3.6,
+      "nl": 3.9,
+      "eu": 7.5
+    },
+    "weightSurcharge": {
+      "light": 0.0,
+      "medium": 1.1,
+      "heavy": 3.2
+    }
+  },
+  "returns": {
+    "perReturn": 2.2
+  }
+}
