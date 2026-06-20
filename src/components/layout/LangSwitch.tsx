@@ -6,31 +6,46 @@ import type { Locale } from '@/i18n/config';
 import { locales } from '@/i18n/config';
 import type { Dictionary } from '@/i18n';
 
-// Tauscht das fuehrende Locale-Segment im aktuellen Pfad, behaelt den Rest.
+// DE/EN-Umschalter exakt aus Vorlage: Border #3a3a40, Space Mono, aktiv orange.
 export function LangSwitch({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const pathname = usePathname() || `/${locale}`;
 
   function swap(target: Locale): string {
     const parts = pathname.split('/');
-    parts[1] = target; // Index 0 ist leer, Index 1 ist die Locale.
+    parts[1] = target;
     return parts.join('/') || `/${target}`;
   }
 
   return (
-    <div className="flex items-center gap-1 text-xs font-semibold" aria-label={dict.langSwitch.label}>
-      {locales.map((loc, i) => (
-        <span key={loc} className="flex items-center gap-1">
-          {i > 0 && <span className="text-muted">/</span>}
+    <div
+      className="flex items-center"
+      style={{
+        fontFamily: "'Space Mono', monospace",
+        fontSize: 13,
+        border: '1px solid #3a3a40',
+        borderRadius: 7,
+        overflow: 'hidden',
+      }}
+      aria-label={dict.langSwitch.label}
+    >
+      {locales.map((loc) => {
+        const active = loc === locale;
+        return (
           <Link
+            key={loc}
             href={swap(loc)}
             hrefLang={loc}
-            aria-current={loc === locale ? 'true' : undefined}
-            className={loc === locale ? 'text-accent' : 'text-grey-300 hover:text-cream'}
+            aria-current={active ? 'true' : undefined}
+            style={
+              active
+                ? { padding: '5px 11px', background: '#ff4a1c', color: '#0b0b0c', fontWeight: 700 }
+                : { padding: '5px 11px', color: '#bcbcbf' }
+            }
           >
             {dict.langSwitch[loc]}
           </Link>
-        </span>
-      ))}
+        );
+      })}
     </div>
   );
 }

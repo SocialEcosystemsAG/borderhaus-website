@@ -32,55 +32,63 @@ const de = {
     backHome: 'Zurück zur Startseite',
   },
   home: {
+    // Hero exakt aus Borderhaus_Homepage_v2.html, Headline-Claim freigegeben.
     hero: {
-      eyebrow: 'Cross-Border-Fulfilment',
-      title: 'Ein Bestand,',
-      titleAccent: 'zwei Heimatmärkte.',
-      subtitle:
-        'Borderhaus versendet deine Bestellungen als Inlandssendung in Deutschland und den Niederlanden. Bio-zertifiziert, schnell und aus dem Dreiländereck heraus direkt zu deinen Kund:innen.',
-      trust: [
-        'EU-Bio-zertifiziert',
-        'Inlandsversand DE und NL',
-        'Plug and Play Integrationen',
+      eyebrow: 'Fulfillment auf der Grenze DE / NL',
+      t1: 'Ein Haus.',
+      t2: 'Zwei Länder.',
+      t3: 'Kein Aufschlag.', // dritte Zeile in Orange
+      sub: 'Borderhaus liegt direkt auf der deutsch-niederländischen Grenze und speist dein Paket ins Inlandsnetz von beiden Ländern ein. Zwei Heimatmärkte aus einem Bestand, ganz ohne Cross-Border-Aufschlag.',
+      cta1: 'Preis berechnen',
+      cta2: 'So funktioniert es',
+      stats: [
+        { v: '2', l: 'Inlandsnetze aus einem Lager' },
+        { v: '0 %', l: 'Cross-Border-Aufschlag' },
+        { v: '3', l: 'Länder im Einzugsgebiet' },
       ],
+      tagline: 'Grenzenlos schnell.',
     },
     proof: {
-      // Dunkle Proof-Leiste. Überschrift mit Keyword.
+      label: 'Warum Borderhaus',
       heading: 'Warum Borderhaus Fulfilment',
-      intro:
-        'Sechs Gründe, warum Brands mit Wirkung ihre Logistik zu uns geben.',
+      sub: 'Sechs Gründe, warum Brands ihr Fulfilment an die Grenze geben.',
       points: [
-        {
-          label: 'Dual-Domestic',
-          headline: '2 Märkte',
-          body: 'Inlandsversand in DE und NL aus einem Bestand, ohne doppelte Lagerhaltung.',
-        },
-        {
-          label: 'Zertifiziert',
-          headline: 'EU-Bio',
-          body: 'Bio-zertifiziertes Fulfilment für Lebensmittel-Brands und sensible Sortimente.',
-        },
-        {
-          label: 'Tempo',
-          headline: '24h',
-          body: 'Schneller Durchlauf vom Eingang bis zum Versand. [PH: echte SLA folgt von Marcel.]',
-        },
-        {
-          label: 'Integrationen',
-          headline: 'Plug and Play',
-          body: 'Shopify, WooCommerce, Billbee, weclapp und REST-API ohne Bastelei.',
-        },
-        {
-          label: 'Grenzlage',
-          headline: 'Dreiländereck',
-          body: 'DE, NL und BE liegen im direkten Einzugsgebiet deiner Lieferungen.',
-        },
-        {
-          label: 'Haltung',
-          headline: 'Impact',
-          body: 'Fulfilment für Brands mit Wirkung, nicht für den größten gemeinsamen Nenner.',
-        },
+        { icon: 'route', k: 'Dual-Domestic', t: '2 Märkte', b: 'Inlandsversand in DE und NL aus einem Bestand.' },
+        { icon: 'badge-check', k: 'Zertifiziert', t: 'EU-Bio', b: 'Bio-zertifiziertes Fulfilment für Lebensmittel-Brands.' },
+        { icon: 'timer', k: 'Tempo', t: '24h', b: 'Schnelle Bearbeitung, echte SLA folgt von Marcel.' },
+        { icon: 'plug-zap', k: 'Integrationen', t: 'Plug & Play', b: 'Shopify, WooCommerce, Billbee, weclapp, REST-API.' },
+        { icon: 'map-pin', k: 'Grenzlage', t: 'Dreiländereck', b: 'DE, NL und BE im Einzugsgebiet.' },
+        { icon: 'heart-handshake', k: 'Haltung', t: 'Impact', b: 'Fulfilment für Brands mit Wirkung.' },
       ],
+    },
+    calcTeaser: {
+      label: 'Preisrechner',
+      t: 'In zwei Minuten zur Kosteneinschätzung',
+      b: 'Schieb deine Bestellungen, Zielmärkte und Retourenquote ein und sieh sofort eine indikative Monatsspanne. Danach machst du daraus mit einem Klick eine Anfrage.',
+      cta: 'Jetzt rechnen',
+      from: 'ab',
+      value: '€22840',
+      unit: 'pro Monat, indikativ',
+    },
+    integrationsStrip: { t: 'Integrationen, die einfach laufen', all: 'Alle ansehen' },
+    teaser: {
+      impLabel: 'Impact ist das Herzstück',
+      impHomeT: 'Wir wachsen, damit Brands mit Wirkung wachsen',
+      impHomeB: 'Borderhaus nimmt Brands mit Haltung die Logistik ab. Lern unsere Kunden und ihren Impact kennen, plus unseren Impact Pledge.',
+      impHomeCta: 'Impact ansehen',
+      ucLabel: 'Use Case',
+      ucHomeT: 'Impact-Brand wächst nach Benelux',
+      ucHomeB: 'Wie eine DACH-Brand mit 8.000 Bestellungen im Monat ohne zweites Lager in die Niederlande skaliert hat.',
+      ucRead: 'Case lesen',
+      kbLabel: 'Knowledge Base',
+      kbHomeT: 'Antworten auf Cross-Border-Fragen',
+      kbHomeB: 'Klare, zitierbare Erklärungen rund um EU-Fulfillment, Inlandskonditionen und Retouren.',
+      kbTopics: ['Cross-Border-Fulfillment EU', 'Fulfillment DE / NL', 'EU-Retouren', 'Inlandskonditionen'],
+    },
+    final: {
+      t: 'Grenzenlos schnell starten',
+      b: 'Rechne deine Kosten, fordere ein Angebot an und wir holen dein Fulfillment auf die Grenze.',
+      cta2: 'Angebot anfordern',
     },
     howItWorks: {
       eyebrow: 'So funktioniert es',
@@ -207,6 +215,39 @@ const de = {
     privacy: { title: 'Datenschutz', lead: '[PH: Datenschutzerklärung von Marcel.]' },
     terms: { title: 'AGB', lead: '[PH: AGB-Inhalt von Marcel.]' },
   },
+  // Impact-Seite exakt nach Borderhaus_Impact_Rhythmus.html (Rhythmus-Variante).
+  impactPage: {
+    heroLabel: 'Impact ist das Herzstück',
+    heroT: 'Impact und Kunden',
+    heroSub:
+      'Borderhaus existiert, damit Brands mit Wirkung wachsen können. Wir nehmen ihnen die Logistik ab, damit ihre Energie in die Mission fließt.',
+    custT: 'Brands, für die wir liefern',
+    custSub: 'Echte Kunden, echter Impact. Logos und Aussagen erscheinen nach Freigabe der jeweiligen Brand.',
+    logoSlot: 'Logo nach Freigabe',
+    joinTag: 'Deine Brand',
+    joinT: 'Du machst Impact?',
+    joinB: 'Dann passt du hierher. Lass uns dein Fulfillment übernehmen, damit deine Energie in die Mission fließt.',
+    joinCta: 'Anfragen',
+    pledgeLabel: 'Borderhaus Impact Pledge',
+    pledgeT: 'Unsere öffentliche Zusage',
+    pledgeSub: 'Sieben Punkte, an denen wir uns messen lassen. Entwurf, final von Marcel bestätigt.',
+    customers: [
+      { name: 'Fairafric', tag: 'Bean to Bar in Ghana', impact: 'Schokolade komplett in Ghana produziert, solarbetrieben, faire Löhne. Die Wertschöpfung bleibt im Ursprungsland.', fact: '100%', factL: 'Produktion im Ursprung' },
+      { name: 'KOA', tag: 'Zero-Waste Kakao', impact: 'Macht aus Kakaofrucht-Pulpe neue Produkte. Zusatzeinkommen für Bauern, weniger Food-Waste.', fact: '0', factL: 'Verschwendung der Pulpe' },
+      { name: 'Slow Forest Coffee', tag: 'Agroforst-Kaffee', impact: 'Regenerativ angebauter Kaffee mit Aufforstung und besseren Einkommen für Farmer.', fact: 'CO₂', factL: 'klimafreundlich angebaut' },
+      { name: 'Saving Grains', tag: 'Nachernteverluste senken', impact: 'Reduziert Nachernteverluste und bringt Kleinbauern in Ghana und Kenia in die kommerzielle Landwirtschaft.', fact: '~30%', factL: 'Ernteverlust adressiert' },
+      { name: 'Reslides', tag: 'Zirkuläre Sandalen', impact: 'Modulare Cradle-to-Cradle-Sandalen aus der Schweiz, mono-material recycelbar, mit Takeback.', fact: '1 kg', factL: 'Plastik gesammelt pro Paar' },
+    ],
+    pledge: [
+      { n: '01', icon: 'package', t: 'Plastikarm verpacken', b: 'Recycelbar, kein unnötiges Füllmaterial.' },
+      { n: '02', icon: 'route', t: 'Kurze Wege', b: 'Dual-Domestic spart Cross-Border-Kilometer.' },
+      { n: '03', icon: 'heart-handshake', t: 'Brands mit Haltung zuerst', b: 'Bevorzugt ökologischer oder sozialer Mehrwert.' },
+      { n: '04', icon: 'users', t: 'Faire Arbeit im Lager', b: 'Faire Bedingungen und Löhne fürs Team.' },
+      { n: '05', icon: 'receipt', t: 'Faire Abrechnung', b: 'Transparent, keine versteckten Posten.' },
+      { n: '06', icon: 'sprout', t: 'Wir geben zurück', b: 'Ein Beitrag pro Periode fließt in ein Impact-Projekt.' },
+      { n: '07', icon: 'line-chart', t: 'Messen und berichten', b: 'Wir messen unseren Fußabdruck, einmal im Jahr offen.' },
+    ],
+  },
   calculator: {
     heading: 'Deine indikative Spanne',
     inputs: {
@@ -266,14 +307,13 @@ const de = {
     consentRequired: 'Bitte stimme der Verarbeitung zu.',
   },
   footer: {
-    tagline: 'Cross-Border-Fulfilment für Brands mit Wirkung.',
-    columns: {
-      product: 'Produkt',
-      company: 'Unternehmen',
-      legal: 'Rechtliches',
-    },
-    parent: 'Eine Marke der Social Ecosystems AG',
-    rights: 'Alle Rechte vorbehalten.',
+    claim: 'Ein Haus. Zwei Länder. Kein Cross-Border-Aufschlag.',
+    by: 'Eine Marke von Social Ecosystems AG',
+    nav: 'Navigation',
+    resources: 'Ressourcen',
+    legal: 'Rechtliches',
+    copyright: '© 2026 Borderhaus · Social Ecosystems AG',
+    domains: 'borderhaus.com · borderhaus.eu · borderhaus.de',
   },
   cookie: {
     text: 'Wir nutzen datensparsame Analyse ohne Cookies von Drittanbietern. Optionale Statistik hilft uns, die Seite zu verbessern.',

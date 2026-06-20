@@ -16,7 +16,8 @@
   }
 
   body {
-    @apply bg-cream font-body text-canvas antialiased;
+    /* Seitenhintergrund dunkel wie Vorlage, Sektionen malen Cream/Weiß darüber. */
+    @apply bg-canvas font-body text-cream antialiased;
   }
 
   h1,
@@ -70,6 +71,72 @@
 
   .card-light {
     @apply rounded-2xl border border-canvas/10 bg-white text-canvas;
+  }
+}
+
+/* Haus-Blitz-Motiv und Reveal, exakte Werte aus Borderhaus_Homepage_v2 */
+@keyframes bh-flash {
+  0%, 42% { opacity: 0.32; }
+  48% { opacity: 1; }
+  52% { opacity: 0.5; }
+  56% { opacity: 1; }
+  62%, 100% { opacity: 0.32; }
+}
+@keyframes bh-split-l {
+  0%, 40% { transform: translateX(0); }
+  52% { transform: translateX(-12px); }
+  66%, 100% { transform: translateX(0); }
+}
+@keyframes bh-split-r {
+  0%, 40% { transform: translateX(0); }
+  52% { transform: translateX(12px); }
+  66%, 100% { transform: translateX(0); }
+}
+@keyframes bh-rise {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.bh-flash { animation: bh-flash 3.6s ease-in-out infinite; }
+.bh-split-l { animation: bh-split-l 3.6s ease-in-out infinite; }
+.bh-split-r { animation: bh-split-r 3.6s ease-in-out infinite; }
+.bh-reveal { animation: bh-rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+
+/* Karten-Hover exakt aus Vorlage */
+.bh-cardL { transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s; }
+.bh-cardL:hover { transform: translateY(-3px); border-color: #d6d1c6; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06); }
+.bh-card { transition: transform 0.18s, border-color 0.18s; }
+.bh-card:hover { transform: translateY(-3px); border-color: #3a3a40; }
+.bh-cta { transition: transform 0.12s, background 0.15s; }
+.bh-cta:hover { transform: translateY(-1px); }
+.bh-cta:active { transform: translateY(1px); }
+
+/* Grids stapeln auf schmalen Screens (Vorlage ist Desktop-first). */
+@media (max-width: 860px) {
+  .bh-hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 36px !important;
+  }
+}
+@media (max-width: 720px) {
+  .bh-calc-teaser {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+  .bh-calc-teaser > div:last-child {
+    text-align: left !important;
+  }
+  .bh-teaser-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+@media (max-width: 880px) {
+  .bh-footer-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+@media (max-width: 520px) {
+  .bh-footer-grid {
+    grid-template-columns: 1fr !important;
   }
 }
 

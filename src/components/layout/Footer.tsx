@@ -2,93 +2,100 @@ import Link from 'next/link';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n';
 import { path, type RouteKey } from '@/i18n/routes';
-import { Logo } from '@/components/brand/Logo';
-import { ORG } from '@/lib/site';
+import { Wordmark } from '@/components/brand/Marks';
 
-// Footer: dunkler Kontrast-Anker (Abschnitt 3a).
+// Footer exakt aus Borderhaus_Homepage_v2.html: dunkel, 4-Spalten-Grid.
 export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
-  const product: { key: RouteKey; label: keyof Dictionary['nav'] }[] = [
+  const nav: { key: RouteKey; label: keyof Dictionary['nav'] }[] = [
     { key: 'howItWorks', label: 'howItWorks' },
     { key: 'services', label: 'services' },
-    { key: 'integrations', label: 'integrations' },
-    { key: 'pricing', label: 'pricing' },
-    { key: 'useCases', label: 'useCases' },
-  ];
-  const company: { key: RouteKey; label: keyof Dictionary['nav'] }[] = [
-    { key: 'impact', label: 'impact' },
-    { key: 'about', label: 'about' },
     { key: 'locations', label: 'locations' },
-    { key: 'knowledge', label: 'knowledge' },
+    { key: 'pricing', label: 'pricing' },
+  ];
+  const resources: { key: RouteKey; label: keyof Dictionary['nav'] }[] = [
+    { key: 'useCases', label: 'useCases' },
+    { key: 'integrations', label: 'integrations' },
     { key: 'contact', label: 'contact' },
   ];
-  const legal: { key: RouteKey; label: keyof Dictionary['nav'] | string }[] = [
+  const legal: { key: RouteKey; label: string }[] = [
     { key: 'imprint', label: dict.pages.imprint.title },
     { key: 'privacy', label: dict.pages.privacy.title },
     { key: 'terms', label: dict.pages.terms.title },
   ];
 
+  const colTitle: React.CSSProperties = {
+    fontFamily: "'Space Mono', monospace",
+    fontSize: 12,
+    letterSpacing: '.14em',
+    textTransform: 'uppercase',
+    color: '#7d7d84',
+    marginBottom: 14,
+  };
+  const linkStyle = 'text-[15px] text-grey-300 transition-colors hover:text-cream';
+
   return (
-    <footer className="mt-auto bg-canvas text-grey-300">
-      <div className="container-bh grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-4">
-        <div className="space-y-4">
-          <Logo onDark />
-          <p className="max-w-xs text-sm text-grey-300">{dict.footer.tagline}</p>
-          <p className="text-xs text-muted">{dict.footer.parent}</p>
+    <footer style={{ borderTop: '1px solid #1b1b1f', padding: 'clamp(40px,6vh,64px) clamp(20px,5vw,80px) 40px' }}>
+      <div className="bh-footer-grid" style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr', gap: 32 }}>
+        <div>
+          <Wordmark size={24} />
+          <p style={{ fontSize: 15, lineHeight: 1.55, color: '#7d7d84', margin: '14px 0 0', maxWidth: 300 }}>{dict.footer.claim}</p>
+          <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 12, letterSpacing: '.1em', textTransform: 'uppercase', color: '#5a5a60', marginTop: 18 }}>
+            {dict.footer.by}
+          </div>
         </div>
 
-        <FooterCol title={dict.footer.columns.product}>
-          {product.map((item) => (
-            <FooterLink key={item.key} href={path(locale, item.key)}>
-              {dict.nav[item.label as keyof Dictionary['nav']]}
-            </FooterLink>
-          ))}
-        </FooterCol>
+        <div>
+          <div style={colTitle}>{dict.footer.nav}</div>
+          <div className="flex flex-col gap-2.5">
+            {nav.map((item) => (
+              <Link key={item.key} href={path(locale, item.key)} className={linkStyle}>
+                {dict.nav[item.label]}
+              </Link>
+            ))}
+          </div>
+        </div>
 
-        <FooterCol title={dict.footer.columns.company}>
-          {company.map((item) => (
-            <FooterLink key={item.key} href={path(locale, item.key)}>
-              {dict.nav[item.label as keyof Dictionary['nav']]}
-            </FooterLink>
-          ))}
-        </FooterCol>
+        <div>
+          <div style={colTitle}>{dict.footer.resources}</div>
+          <div className="flex flex-col gap-2.5">
+            {resources.map((item) => (
+              <Link key={item.key} href={path(locale, item.key)} className={linkStyle}>
+                {dict.nav[item.label]}
+              </Link>
+            ))}
+          </div>
+        </div>
 
-        <FooterCol title={dict.footer.columns.legal}>
-          {legal.map((item) => (
-            <FooterLink key={item.key} href={path(locale, item.key)}>
-              {item.label}
-            </FooterLink>
-          ))}
-          <a href={`mailto:${ORG.email}`} className="block text-sm text-grey-300 hover:text-cream">
-            {ORG.email}
-          </a>
-        </FooterCol>
+        <div>
+          <div style={colTitle}>{dict.footer.legal}</div>
+          <div className="flex flex-col gap-2.5">
+            {legal.map((item) => (
+              <Link key={item.key} href={path(locale, item.key)} className={linkStyle}>
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
 
-      <div className="border-t border-white/10">
-        <div className="container-bh flex flex-col items-center justify-between gap-2 py-6 text-xs text-muted sm:flex-row">
-          <span>
-            © {new Date().getFullYear()} {ORG.legalName}. {dict.footer.rights}
-          </span>
-          <span className="font-mono uppercase tracking-widest">Borderhaus</span>
-        </div>
+      <div
+        style={{
+          maxWidth: 1280,
+          margin: '34px auto 0',
+          borderTop: '1px solid #1b1b1f',
+          paddingTop: 20,
+          fontFamily: "'Space Mono', monospace",
+          fontSize: 12,
+          color: '#5a5a60',
+          display: 'flex',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: 10,
+        }}
+      >
+        <span>{dict.footer.copyright}</span>
+        <span>{dict.footer.domains}</span>
       </div>
     </footer>
-  );
-}
-
-function FooterCol({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="space-y-3">
-      <h2 className="label-mono text-grey-200">{title}</h2>
-      <nav className="flex flex-col gap-2">{children}</nav>
-    </div>
-  );
-}
-
-function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
-  return (
-    <Link href={href} className="text-sm text-grey-300 transition-colors hover:text-cream">
-      {children}
-    </Link>
   );
 }

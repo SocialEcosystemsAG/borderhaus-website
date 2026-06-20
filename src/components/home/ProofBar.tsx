@@ -1,40 +1,73 @@
 import type { Dictionary } from '@/i18n';
+import { Icon } from '@/components/brand/Icon';
 
-// Proof-Leiste dunkel: sechs Punkte mit Icon, Mono-Label, grosser Headline und
-// Satz. Ueberschrift mit Keyword (Abschnitt 3a).
-const ICONS = ['M3 12h18M12 3v18', 'M5 13l4 4L19 7', 'M13 2L3 14h7l-1 8 10-12h-7z', 'M4 7h16M4 12h16M4 17h10', 'M12 21s-7-4.5-7-10a7 7 0 0114 0c0 5.5-7 10-7 10z', 'M12 3l2.5 5 5.5.8-4 3.9.9 5.5L12 16l-4.9 2.6.9-5.5-4-3.9 5.5-.8z'];
-
+// Proof-Sektion hell exakt aus Borderhaus_Homepage_v2.html, weiße Karten.
 export function ProofBar({ dict }: { dict: Dictionary }) {
   const p = dict.home.proof;
   return (
-    <section className="bg-canvas text-cream">
-      <div className="container-bh py-16 sm:py-20 lg:py-24">
-        <div className="max-w-2xl">
-          <p className="label-mono mb-3">Borderhaus</p>
-          <h2 className="text-3xl sm:text-4xl">{p.heading}</h2>
-          <p className="mt-4 text-lg text-grey-300">{p.intro}</p>
+    <section style={{ background: '#f5f3ee', color: '#0b0b0c', padding: 'clamp(52px,7vh,90px) clamp(20px,5vw,80px)' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+        <div
+          style={{
+            fontFamily: "'Space Mono', monospace",
+            fontSize: 13,
+            letterSpacing: '.2em',
+            textTransform: 'uppercase',
+            color: '#ff4a1c',
+            marginBottom: 14,
+          }}
+        >
+          {p.label}
         </div>
+        <h2
+          style={{
+            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: 'clamp(28px,3.6vw,46px)',
+            fontWeight: 700,
+            letterSpacing: '-.02em',
+            margin: '0 0 8px',
+          }}
+        >
+          {p.heading}
+        </h2>
+        <p style={{ fontSize: 17, color: '#5a5a62', maxWidth: 560, margin: '0 0 36px' }}>{p.sub}</p>
 
-        <ul className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
-          {p.points.map((point, i) => (
-            <li key={point.label} className="bg-panel p-7">
-              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-panel-2 text-accent">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path
-                    d={ICONS[i % ICONS.length]}
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </span>
-              <p className="label-mono mt-5 text-accent-2">{point.label}</p>
-              <p className="mt-1 font-display text-2xl font-semibold">{point.headline}</p>
-              <p className="mt-2 text-sm text-grey-300">{point.body}</p>
-            </li>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(270px,1fr))', gap: 16 }}>
+          {p.points.map((pp) => (
+            <div
+              key={pp.k}
+              className="bh-cardL"
+              style={{ background: '#fff', border: '1px solid #e6e3dc', borderRadius: 14, padding: 30, boxShadow: '0 1px 0 rgba(0,0,0,.03)' }}
+            >
+              <Icon name={pp.icon} size={28} />
+              <div
+                style={{
+                  fontFamily: "'Space Mono', monospace",
+                  fontSize: 12,
+                  letterSpacing: '.16em',
+                  textTransform: 'uppercase',
+                  color: '#6f6f76',
+                  margin: '18px 0 8px',
+                }}
+              >
+                {pp.k}
+              </div>
+              <div
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontSize: 26,
+                  fontWeight: 700,
+                  color: '#0b0b0c',
+                  marginBottom: 8,
+                  letterSpacing: '-.01em',
+                }}
+              >
+                {pp.t}
+              </div>
+              <p style={{ fontSize: 15, lineHeight: 1.5, color: '#3a3a40', margin: 0 }}>{pp.b}</p>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     </section>
   );

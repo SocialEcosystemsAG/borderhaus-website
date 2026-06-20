@@ -86,7 +86,8 @@ export default async function LocaleLayout({
         </a>
         <OrganizationJsonLd locale={locale} />
         <Header locale={locale} dict={dict} />
-        <main id="main" className="flex-1">
+        {/* Fixed-Header ist 72px hoch, Inhalt startet darunter (wie Vorlage). */}
+        <main id="main" className="flex-1" style={{ paddingTop: 72 }}>
           {children}
         </main>
         <Footer locale={locale} dict={dict} />

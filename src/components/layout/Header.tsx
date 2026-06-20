@@ -5,54 +5,69 @@ import { useState } from 'react';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n';
 import { path, type RouteKey } from '@/i18n/routes';
-import { Logo } from '@/components/brand/Logo';
+import { Wordmark } from '@/components/brand/Marks';
 import { LangSwitch } from './LangSwitch';
 
-// Header und Nav: immer schwarz (#0b0b0c), fix auf jeder Seite (Abschnitt 3a).
-const NAV: { key: RouteKey; label: keyof Dictionary['nav'] }[] = [
+// Nav exakt aus Borderhaus_Homepage_v2.html: fixed, 72px, blur, translucent.
+const NAV: { key: RouteKey; label: keyof Dictionary['nav']; accent?: boolean }[] = [
   { key: 'howItWorks', label: 'howItWorks' },
-  { key: 'impact', label: 'impact' },
-  { key: 'whoFor', label: 'whoFor' },
   { key: 'services', label: 'services' },
   { key: 'integrations', label: 'integrations' },
   { key: 'locations', label: 'locations' },
-  { key: 'pricing', label: 'pricing' },
+  { key: 'impact', label: 'impact', accent: true },
   { key: 'useCases', label: 'useCases' },
-  { key: 'knowledge', label: 'knowledge' },
 ];
 
 export function Header({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-canvas text-cream">
-      <div className="container-bh flex h-16 items-center justify-between gap-4">
-        <Link href={path(locale, 'home')} className="shrink-0" aria-label="Borderhaus">
-          <Logo onDark />
-        </Link>
+    <header
+      className="fixed inset-x-0 top-0 z-50 flex h-[72px] items-center justify-between border-b border-[#1b1b1f] px-[clamp(20px,4vw,56px)]"
+      style={{ background: 'rgba(11,11,12,.82)', backdropFilter: 'blur(12px)' }}
+    >
+      <Link href={path(locale, 'home')} aria-label="Borderhaus" className="shrink-0">
+        <Wordmark size={26} />
+      </Link>
 
-        <nav className="hidden items-center gap-5 xl:flex" aria-label={dict.nav.menu}>
+      <div className="flex items-center gap-[clamp(14px,2vw,30px)]">
+        <nav className="hidden items-center gap-[clamp(14px,2vw,30px)] lg:flex" aria-label={dict.nav.menu}>
           {NAV.map((item) => (
             <Link
               key={item.key}
               href={path(locale, item.key)}
-              className="text-sm text-grey-300 transition-colors hover:text-cream"
+              className="bh-nav-link"
+              style={
+                item.accent
+                  ? { color: '#ff4a1c', fontWeight: 700, fontSize: 15 }
+                  : { fontSize: 15, fontWeight: 500 }
+              }
             >
               {dict.nav[item.label]}
             </Link>
           ))}
         </nav>
 
-        <div className="hidden items-center gap-3 xl:flex">
-          <LangSwitch locale={locale} dict={dict} />
-          <Link href={path(locale, 'contact')} className="btn-primary">
-            {dict.cta.requestQuote}
-          </Link>
-        </div>
+        <LangSwitch locale={locale} dict={dict} />
+
+        <Link
+          href={path(locale, 'pricing')}
+          className="bh-cta hidden sm:inline-flex"
+          style={{
+            background: '#ff4a1c',
+            color: '#0b0b0c',
+            fontWeight: 700,
+            fontSize: 15,
+            padding: '11px 20px',
+            borderRadius: 9,
+          }}
+        >
+          {dict.nav.pricing}
+        </Link>
 
         <button
           type="button"
-          className="inline-flex items-center justify-center rounded-md p-2 text-cream xl:hidden"
+          className="inline-flex items-center justify-center p-1.5 text-cream lg:hidden"
           aria-expanded={open}
           aria-controls="mobile-nav"
           onClick={() => setOpen((v) => !v)}
@@ -69,28 +84,29 @@ export function Header({ locale, dict }: { locale: Locale; dict: Dictionary }) {
       </div>
 
       {open && (
-        <div id="mobile-nav" className="border-t border-white/10 bg-canvas xl:hidden">
-          <nav className="container-bh flex flex-col gap-1 py-4" aria-label={dict.nav.menu}>
+        <div
+          id="mobile-nav"
+          className="absolute inset-x-0 top-[72px] border-b border-[#1b1b1f] bg-canvas lg:hidden"
+        >
+          <nav className="flex flex-col gap-1 px-[clamp(20px,5vw,56px)] py-4" aria-label={dict.nav.menu}>
             {NAV.map((item) => (
               <Link
                 key={item.key}
                 href={path(locale, item.key)}
                 className="rounded-lg px-2 py-2.5 text-base text-grey-200 hover:bg-panel"
+                style={item.accent ? { color: '#ff4a1c', fontWeight: 700 } : undefined}
                 onClick={() => setOpen(false)}
               >
                 {dict.nav[item.label]}
               </Link>
             ))}
-            <div className="mt-3 flex items-center justify-between gap-3">
-              <LangSwitch locale={locale} dict={dict} />
-              <Link
-                href={path(locale, 'contact')}
-                className="btn-primary flex-1"
-                onClick={() => setOpen(false)}
-              >
-                {dict.cta.requestQuote}
-              </Link>
-            </div>
+            <Link
+              href={path(locale, 'pricing')}
+              className="mt-3 rounded-lg bg-accent px-4 py-3 text-center font-semibold text-canvas"
+              onClick={() => setOpen(false)}
+            >
+              {dict.nav.pricing}
+            </Link>
           </nav>
         </div>
       )}
