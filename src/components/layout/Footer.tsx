@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n';
 import { path, type RouteKey } from '@/i18n/routes';
@@ -42,6 +43,14 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
           <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 12, letterSpacing: '.1em', textTransform: 'uppercase', color: '#5a5a60', marginTop: 18 }}>
             {dict.footer.by}
           </div>
+          {/* EU-Bio-Logo als Trust-Signal. */}
+          <Image
+            src="/images/eu-organic-logo.png"
+            alt={locale === 'de' ? 'EU-Bio-Logo' : 'EU organic logo'}
+            width={75}
+            height={50}
+            style={{ marginTop: 20, height: 'auto', width: 75 }}
+          />
         </div>
 
         <div>
