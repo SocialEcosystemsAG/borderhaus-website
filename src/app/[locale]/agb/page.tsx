@@ -3,6 +3,7 @@ import { isLocale, type Locale } from '@/i18n/config';
 import { getDictionary } from '@/i18n';
 import { pageMetadata } from '@/lib/seo';
 import { LegalLayout } from '@/components/ui/LegalLayout';
+import { terms } from '@/config/legal';
 
 export async function generateMetadata({
   params,
@@ -19,5 +20,5 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
   const { locale } = await params;
   const loc: Locale = isLocale(locale) ? locale : 'de';
   const dict = getDictionary(loc);
-  return <LegalLayout title={dict.pages.terms.title} lead={dict.pages.terms.lead} />;
+  return <LegalLayout title={dict.pages.terms.title} doc={terms} />;
 }

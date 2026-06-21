@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { isLocale, type Locale } from '@/i18n/config';
 import { getDictionary } from '@/i18n';
 import { path } from '@/i18n/routes';
@@ -64,7 +65,33 @@ export default async function HowItWorksPage({ params }: { params: Promise<{ loc
           </div>
           <p style={{ fontSize: 16, lineHeight: 1.55, color: '#dcdbd9', textAlign: 'center', maxWidth: 620, margin: '26px auto 0' }}>{p.dualB}</p>
         </div>
+
+        {/* CTAs (Runde 2) */}
+        <div style={{ marginTop: 32, display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+          <Link href={path(loc, 'pricing')} className="bh-cta" style={{ background: '#ff4a1c', color: '#0b0b0c', fontWeight: 700, fontSize: 16, padding: '14px 26px', borderRadius: 9 }}>
+            {dict.cta.startCalc}
+          </Link>
+          <Link href={path(loc, 'book')} className="bh-cta" style={{ border: '1px solid #c9c4ba', color: '#0b0b0c', fontWeight: 600, fontSize: 16, padding: '14px 26px', borderRadius: 9 }}>
+            {dict.nav.book}
+          </Link>
+        </div>
       </CreamSection>
+
+      {/* Abschluss-CTA dunkel */}
+      <section style={{ padding: 'clamp(40px,6vh,72px) clamp(20px,5vw,80px)' }}>
+        <div style={{ maxWidth: 1000, margin: '0 auto', textAlign: 'center', background: 'linear-gradient(180deg,#141417,#0e0e10)', border: '1px solid #26262a', borderRadius: 18, padding: 'clamp(32px,5vw,56px)' }}>
+          <h2 style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(26px,3.4vw,40px)', fontWeight: 700, letterSpacing: '-.02em', margin: '0 0 14px', color: '#f5f3ee' }}>{dict.home.final.t}</h2>
+          <p style={{ fontSize: 17, lineHeight: 1.55, color: '#dcdbd9', maxWidth: 540, margin: '0 auto 26px' }}>{dict.home.final.b}</p>
+          <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Link href={path(loc, 'pricing')} className="bh-cta" style={{ background: '#ff4a1c', color: '#0b0b0c', fontWeight: 700, fontSize: 16, padding: '14px 28px', borderRadius: 10 }}>
+              {dict.cta.startCalc}
+            </Link>
+            <Link href={path(loc, 'book')} className="bh-cta" style={{ border: '1px solid #3a3a40', color: '#f5f3ee', fontWeight: 600, fontSize: 16, padding: '14px 28px', borderRadius: 10 }}>
+              {dict.nav.book}
+            </Link>
+          </div>
+        </div>
+      </section>
     </>
   );
 }

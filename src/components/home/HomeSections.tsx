@@ -43,8 +43,9 @@ export function CalcTeaser({ locale, dict }: { locale: Locale; dict: Dictionary 
         </div>
         <div style={{ fontFamily: "'Space Mono', monospace", textAlign: 'right' }}>
           <div style={{ fontSize: 13, color: '#6f6f76', letterSpacing: '.16em', textTransform: 'uppercase' }}>{c.from}</div>
-          <div style={{ fontSize: 'clamp(38px,5vw,64px)', fontWeight: 700, color: '#0b0b0c', lineHeight: 1, marginTop: 8 }}>{c.value}</div>
+          <div style={{ fontSize: 'clamp(34px,4.4vw,52px)', fontWeight: 700, color: '#0b0b0c', lineHeight: 1, marginTop: 8 }}>{c.value}</div>
           <div style={{ fontSize: 14, color: '#6f6f76', marginTop: 6 }}>{c.unit}</div>
+          <div style={{ fontFamily: "'Hanken Grotesk', sans-serif", fontSize: 13, color: '#6f6f76', marginTop: 10, maxWidth: 240, marginLeft: 'auto', lineHeight: 1.45 }}>{c.incl}</div>
         </div>
       </div>
     </section>
@@ -68,7 +69,11 @@ export function IntegrationsStrip({ locale, dict }: { locale: Locale; dict: Dict
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))', gap: 14 }}>
           {INTEGRATIONS.map((ig) => (
             <div key={ig.name} className="bh-card" style={{ background: '#141417', border: '1px solid #26262a', borderRadius: 12, padding: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', height: 96 }}>
-              <Image src={ig.logo} alt={ig.name} width={120} height={36} loading="eager" style={{ maxHeight: 36, maxWidth: '78%', width: 'auto', height: 'auto', objectFit: 'contain' }} />
+              {ig.logo ? (
+                <Image src={ig.logo} alt={ig.name} width={120} height={36} loading="eager" style={{ maxHeight: 36, maxWidth: '78%', width: 'auto', height: 'auto', objectFit: 'contain' }} />
+              ) : (
+                <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 19, fontWeight: 700, color: '#f5f3ee' }}>{ig.name}</span>
+              )}
             </div>
           ))}
         </div>
@@ -132,6 +137,9 @@ export function FinalCta({ locale, dict }: { locale: Locale; dict: Dictionary })
         <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
           <Link href={path(locale, 'pricing')} className="bh-cta" style={{ background: '#ff4a1c', color: '#0b0b0c', fontWeight: 700, fontSize: 17, padding: '15px 30px', borderRadius: 10 }}>
             {dict.home.hero.cta1}
+          </Link>
+          <Link href={path(locale, 'book')} className="bh-cta" style={{ border: '1px solid #3a3a40', color: '#f5f3ee', fontWeight: 600, fontSize: 17, padding: '15px 30px', borderRadius: 10 }}>
+            {dict.nav.book}
           </Link>
           <Link href={path(locale, 'contact')} className="bh-cta" style={{ border: '1px solid #3a3a40', color: '#f5f3ee', fontWeight: 600, fontSize: 17, padding: '15px 30px', borderRadius: 10 }}>
             {f.cta2}

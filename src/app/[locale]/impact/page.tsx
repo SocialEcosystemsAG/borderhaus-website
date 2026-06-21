@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { isLocale, type Locale } from '@/i18n/config';
 import { getDictionary } from '@/i18n';
 import { path } from '@/i18n/routes';
 import { pageMetadata } from '@/lib/seo';
+import { publicAsset } from '@/lib/assets';
 import { Icon } from '@/components/brand/Icon';
 import { Blitz } from '@/components/brand/Marks';
 import { BreadcrumbJsonLd } from '@/components/seo/JsonLd';
@@ -64,11 +66,16 @@ export default async function ImpactPage({ params }: { params: Promise<{ locale:
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(290px,1fr))', gap: 22 }}>
             {p.customers.map((cu) => (
               <div key={cu.name} className="bh-cardL" style={{ background: '#fff', border: '1px solid #e6e3dc', borderRadius: 18, padding: 30, display: 'flex', flexDirection: 'column', boxShadow: '0 1px 0 rgba(0,0,0,.03)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, marginBottom: 18 }}>
-                  <div style={{ height: 50, minWidth: 120, display: 'flex', alignItems: 'center', padding: '0 18px', background: '#faf8f3', border: '1px dashed #d6d1c6', borderRadius: 10, fontFamily: "'Space Grotesk', sans-serif", fontSize: 19, fontWeight: 700, color: '#0b0b0c' }}>
-                    {cu.name}
-                  </div>
-                  <span style={{ fontFamily: "'Space Mono', monospace", fontSize: 10, letterSpacing: '.1em', textTransform: 'uppercase', color: '#a7a299', textAlign: 'right', flex: 'none', maxWidth: 90, lineHeight: 1.4 }}>{p.logoSlot}</span>
+                <div style={{ marginBottom: 18 }}>
+                  {publicAsset(cu.logo) ? (
+                    <div style={{ height: 50, display: 'flex', alignItems: 'center' }}>
+                      <Image src={cu.logo} alt={cu.name} width={160} height={50} style={{ maxHeight: 50, maxWidth: 180, width: 'auto', height: 'auto', objectFit: 'contain' }} />
+                    </div>
+                  ) : (
+                    <div style={{ height: 50, minWidth: 120, display: 'inline-flex', alignItems: 'center', padding: '0 18px', background: '#faf8f3', border: '1px dashed #d6d1c6', borderRadius: 10, fontFamily: "'Space Grotesk', sans-serif", fontSize: 19, fontWeight: 700, color: '#0b0b0c' }}>
+                      {cu.name}
+                    </div>
+                  )}
                 </div>
                 <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 12, letterSpacing: '.16em', textTransform: 'uppercase', color: '#ff4a1c', marginBottom: 14 }}>{cu.tag}</div>
                 <p style={{ fontSize: 16, lineHeight: 1.55, color: '#3a3a40', margin: 0, flex: 1 }}>{cu.impact}</p>
@@ -113,6 +120,14 @@ export default async function ImpactPage({ params }: { params: Promise<{ locale:
                 </div>
               </div>
             ))}
+            {/* Akzent-Karte füllt den sechsten Platz im Pledge-Grid. */}
+            <div style={{ background: 'linear-gradient(120deg,#1c1410,#141417)', border: '1px solid #3a2a20', borderRadius: 16, padding: '28px 30px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 19, fontWeight: 700, color: '#f5f3ee', marginBottom: 8 }}>{p.pledgeCard.t}</div>
+              <p style={{ fontSize: 15, lineHeight: 1.5, color: '#dcdbd9', margin: '0 0 18px' }}>{p.pledgeCard.b}</p>
+              <Link href={path(loc, 'book')} className="bh-cta" style={{ alignSelf: 'flex-start', background: '#ff4a1c', color: '#0b0b0c', fontWeight: 700, fontSize: 15, padding: '12px 20px', borderRadius: 10 }}>
+                {p.pledgeCard.cta} &rarr;
+              </Link>
+            </div>
           </div>
 
           <div style={{ marginTop: 48, display: 'flex', gap: 14, flexWrap: 'wrap' }}>

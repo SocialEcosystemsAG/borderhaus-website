@@ -1,13 +1,24 @@
 {
   "currency": "EUR",
-  "_note": "Platzhalter-Beispieltarife aus der Design-Vorlage. Tarif-Logik liegt bewusst in dieser Konfig (Brief). Echte Werte liefert Marcel.",
-  "storagePerUnitPerDay": 3.2,
-  "daysPerMonth": 30,
-  "pickFirst": 0.45,
-  "pickAdd": 0.12,
-  "ship": { "s": 3.1, "m": 3.9, "l": 5.4 },
-  "returnHandling": 1.8,
-  "services": { "kitting": 0.6, "bundles": 0.4 },
-  "marketMult": { "de": 1, "nl": 1.02, "eu": 1.12 },
-  "range": { "low": 0.9, "high": 1.15 }
+  "_note": "Echte Tarife Runde 2 (EUR). Logik bleibt konfigurierbar (Brief). Gewichtsklassen mappen auf Versandstufen und Kartongrößen über weightMap.",
+  "setupOnce": 1000,
+  "monthlyFlat": 99,
+  "weeksPerMonth": 4.33,
+  "inbound": { "perDelivery": 4.95, "perPallet": 6.45, "perColli": 0.59, "perArticle": 0.3 },
+  "storageWeekly": { "pallet": 2.85, "binS": 0.24, "binM": 0.66, "binL": 1.08 },
+  "outbound": { "orderInclFirstPick": 1.4, "perAdditionalPick": 0.2, "b2bPallet": 10.0 },
+  "returns": { "perReturn": 1.08, "abcPerArticle": 1.24 },
+  "packaging": { "xs": 0.28, "s": 0.3, "m": 0.33, "l": 0.67, "xl": 1.35, "xxl": 2.69 },
+  "shipping": {
+    "de": { "2": 4.6, "5": 5.54, "10": 5.99, "20": 6.65, "31.5": 7.45 },
+    "nl": { "2": 6.85, "5": 6.85, "10": 6.85, "20": 6.85, "31.5": 12.0 }
+  },
+  "valueAdd": { "staffPerMinute": 0.69, "insurancePer1000PerMonth": 0.35 },
+  "service": { "kittingMinutes": 1, "assemblyMinutes": 2 },
+  "weightMap": {
+    "light": { "tier": "2", "carton": "s" },
+    "medium": { "tier": "5", "carton": "m" },
+    "heavy": { "tier": "31.5", "carton": "xl" }
+  },
+  "range": { "low": 0.95, "high": 1.15 }
 }

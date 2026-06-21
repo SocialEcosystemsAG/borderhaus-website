@@ -14,6 +14,7 @@ export const routes = {
   knowledge: 'wissen',
   about: 'ueber-uns',
   contact: 'kontakt',
+  book: 'termin',
   imprint: 'impressum',
   privacy: 'datenschutz',
   terms: 'agb',

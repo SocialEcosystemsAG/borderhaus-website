@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { Suspense } from 'react';
 import { isLocale, type Locale } from '@/i18n/config';
 import { getDictionary } from '@/i18n';
@@ -46,6 +47,9 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
                 </div>
               ))}
             </div>
+            <Link href={path(loc, 'book')} className="bh-cta" style={{ display: 'inline-flex', marginTop: 28, border: '1px solid #c9c4ba', color: '#0b0b0c', fontWeight: 600, fontSize: 16, padding: '13px 24px', borderRadius: 9 }}>
+              {dict.nav.book} &rarr;
+            </Link>
           </div>
 
           <Suspense fallback={null}>

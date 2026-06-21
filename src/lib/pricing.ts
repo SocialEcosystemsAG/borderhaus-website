@@ -1,69 +1,124 @@
 import config from '@/config/pricing.json';
 
-export type WeightKey = 's' | 'm' | 'l';
+export type WeightKey = 'light' | 'medium' | 'heavy';
 
-// Eingabezustand exakt wie in der Design-Vorlage (Borderhaus_Homepage_v2.html).
+// Eingabezustand Runde 2: Pro-Sendung-Sicht mit echten Tarifen.
 export interface CalculatorState {
-  orders: number;
-  picks: number;
-  storage: number; // Stellplätze
+  orders: number; // Bestellungen pro Monat
+  picks: number; // Artikel pro Bestellung
+  skus: number; // Anzahl SKUs = Fachbodenplätze, treibt Fach-Lagerung
+  deliveries: number; // Anlieferungen pro Monat, treibt Inbound
   de: boolean;
   nl: boolean;
-  eu: boolean;
   weight: WeightKey;
-  returns: number; // Prozent 0..40
+  returns: number; // Prozent
   kitting: boolean;
-  bundles: boolean;
+  assembly: boolean; // Bundles und Produkt-Assembly
 }
 
 export interface CalculatorResult {
-  storage: number;
+  // Pro-Sendung-Komponenten
   pick: number;
-  ship: number;
-  ret: number;
-  svc: number;
-  low: number;
-  high: number;
-  hasSvc: boolean;
+  packaging: number;
+  shipping: number;
+  storage: number;
+  returns: number;
+  valueAdd: number;
+  perShipment: number;
+  perShipmentLow: number;
+  perShipmentHigh: number;
+  // Monatlich
+  monthly: number;
+  monthlyLow: number;
+  monthlyHigh: number;
+  inboundMonthly: number;
+  monthlyFlat: number;
+  setupOnce: number;
 }
 
 export const DEFAULT_STATE: CalculatorState = {
-  orders: 5000,
-  picks: 2,
-  storage: 20,
+  orders: 1000,
+  picks: 1,
+  skus: 180,
+  deliveries: 2,
   de: true,
-  nl: true,
-  eu: false,
-  weight: 'm',
-  returns: 8,
+  nl: false,
+  weight: 'light',
+  returns: 3,
   kitting: false,
-  bundles: false,
+  assembly: false,
 };
 
-// Berechnung 1:1 zur Vorlage, Tarife aus der Konfig (nicht hart verdrahtet).
-export function compute(c: CalculatorState): CalculatorResult {
-  const storage = c.storage * config.storagePerUnitPerDay * config.daysPerMonth;
-  const pick = c.orders * (config.pickFirst + Math.max(0, c.picks - 1) * config.pickAdd);
-  const mult = c.eu ? config.marketMult.eu : c.nl ? config.marketMult.nl : config.marketMult.de;
-  const ship = c.orders * config.ship[c.weight] * mult;
-  const ret = c.orders * (c.returns / 100) * config.returnHandling;
-  let svc = 0;
-  if (c.kitting) svc += c.orders * config.services.kitting;
-  if (c.bundles) svc += c.orders * config.services.bundles;
-  const sub = storage + pick + ship + ret + svc;
+type ShipTable = Record<string, number>;
+
+function shipRate(state: CalculatorState, tier: string): number {
+  const markets: ShipTable[] = [];
+  if (state.de) markets.push(config.shipping.de as ShipTable);
+  if (state.nl) markets.push(config.shipping.nl as ShipTable);
+  if (markets.length === 0) markets.push(config.shipping.de as ShipTable);
+  const sum = markets.reduce((acc, m) => acc + (m[tier] ?? 0), 0);
+  return sum / markets.length;
+}
+
+// Berechnung der Pro-Sendung-Kosten plus Monatssicht. Tarife aus der Konfig.
+export function compute(s: CalculatorState): CalculatorResult {
+  const orders = Math.max(1, s.orders);
+  const map = config.weightMap[s.weight];
+
+  const pick = config.outbound.orderInclFirstPick + Math.max(0, s.picks - 1) * config.outbound.perAdditionalPick;
+  const packaging = (config.packaging as Record<string, number>)[map.carton] ?? 0;
+  const shipping = shipRate(s, map.tier);
+
+  // Fach-Lagerung pro Monat über alle SKUs, anteilig je Sendung.
+  const storageMonthly = s.skus * config.storageWeekly.binM * config.weeksPerMonth;
+  const storage = storageMonthly / orders;
+
+  const returns = (s.returns / 100) * config.returns.perReturn;
+
+  const valueAdd =
+    (s.kitting ? config.service.kittingMinutes * config.valueAdd.staffPerMinute : 0) +
+    (s.assembly ? config.service.assemblyMinutes * config.valueAdd.staffPerMinute : 0);
+
+  const perShipment = pick + packaging + shipping + storage + returns + valueAdd;
+
+  const inboundMonthly = s.deliveries * config.inbound.perDelivery;
+  const monthly = perShipment * orders + inboundMonthly + config.monthlyFlat;
+
+  const { low, high } = config.range;
   return {
-    storage,
     pick,
-    ship,
-    ret,
-    svc,
-    low: sub * config.range.low,
-    high: sub * config.range.high,
-    hasSvc: c.kitting || c.bundles,
+    packaging,
+    shipping,
+    storage,
+    returns,
+    valueAdd,
+    perShipment,
+    perShipmentLow: perShipment * low,
+    perShipmentHigh: perShipment * high,
+    monthly,
+    monthlyLow: monthly * low,
+    monthlyHigh: monthly * high,
+    inboundMonthly,
+    monthlyFlat: config.monthlyFlat,
+    setupOnce: config.setupOnce,
   };
 }
 
-// Formatierung exakt wie Vorlage: gerundet auf 10er, ohne Tausenderpunkt.
-export function fmt(n: number): string {
-  return '€' + Math.round(n / 10) * 10;
+// Pro-Sendung-Format mit zwei Nachkommastellen, locale-gerecht.
+export function fmt(n: number, locale = 'de'): string {
+  return new Intl.NumberFormat(locale === 'de' ? 'de-DE' : 'en-IE', {
+    style: 'currency',
+    currency: config.currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(n);
+}
+
+// Monatsbeträge ohne Nachkommastellen.
+export function fmt0(n: number, locale = 'de'): string {
+  return new Intl.NumberFormat(locale === 'de' ? 'de-DE' : 'en-IE', {
+    style: 'currency',
+    currency: config.currency,
+    maximumFractionDigits: 0,
+  }).format(n);
 }

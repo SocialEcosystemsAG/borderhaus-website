@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createZohoLead } from '@/lib/zoho';
 
 export const runtime = 'nodejs';
 
@@ -8,6 +9,10 @@ interface LeadPayload {
   email?: string;
   name?: string;
   message?: string;
+  shopSystem?: string;
+  volume?: string;
+  markets?: string;
+  source?: string;
   company_website?: string; // Honeypot
   'cf-turnstile-response'?: string;
   consent?: string;
@@ -93,20 +98,36 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: false, error: 'verification_failed' }, { status: 400 });
   }
 
-  // Pflichtfelder serverseitig pruefen.
+  // Pflichtfelder serverseitig pruefen. E-Mail ist optional (Book-a-Call-
+  // Vorqualifizierung hat keine), aber falls vorhanden, muss sie gueltig sein.
   const email = (lead.email ?? '').trim();
-  if (!lead.brand?.trim() || !lead.name?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return NextResponse.json({ ok: false, error: 'validation' }, { status: 422 });
+  }
+  if (!lead.brand?.trim() && !lead.name?.trim()) {
     return NextResponse.json({ ok: false, error: 'validation' }, { status: 422 });
   }
   if (lead.consent !== 'yes') {
     return NextResponse.json({ ok: false, error: 'consent_required' }, { status: 422 });
   }
 
+  // Lead an Zoho CRM (env-gated) und Mail-Fallback, plus optionaler Webhook.
+  const zohoOk = await createZohoLead({
+    name: lead.name,
+    email: lead.email,
+    brand: lead.brand,
+    shopSystem: lead.shopSystem,
+    volume: lead.volume,
+    markets: lead.markets,
+    message: lead.message,
+    source: lead.source,
+  });
   const mailed = await sendMail(lead);
   await forwardToCrm(lead);
 
-  if (!mailed) {
-    return NextResponse.json({ ok: false, error: 'mail_failed' }, { status: 502 });
+  // Erfolg, wenn mindestens ein Kanal den Lead aufgenommen hat.
+  if (!mailed && !zohoOk) {
+    return NextResponse.json({ ok: false, error: 'delivery_failed' }, { status: 502 });
   }
   return NextResponse.json({ ok: true });
 }

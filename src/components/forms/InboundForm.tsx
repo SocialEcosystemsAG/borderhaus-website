@@ -128,6 +128,10 @@ export function InboundForm({ locale, dict }: { locale: Locale; dict: Dictionary
             <select id="shop" className="bh-in" value={form.shop} onChange={(e) => set({ shop: e.target.value })}>
               <option value="shopify">Shopify</option>
               <option value="woocommerce">WooCommerce</option>
+              <option value="shopware">Shopware</option>
+              <option value="billbee">Billbee</option>
+              <option value="weclapp">weclapp</option>
+              <option value="rest-api">REST-API</option>
               <option value="other">{f.other}</option>
             </select>
           </div>

@@ -7,11 +7,11 @@ import { Wordmark } from '@/components/brand/Marks';
 
 // Footer exakt aus Borderhaus_Homepage_v2.html: dunkel, 4-Spalten-Grid.
 export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
+  // Leistungen und Standorte sind aus den Footer-Links entfernt (Runde 2).
   const nav: { key: RouteKey; label: keyof Dictionary['nav'] }[] = [
     { key: 'howItWorks', label: 'howItWorks' },
-    { key: 'services', label: 'services' },
-    { key: 'locations', label: 'locations' },
     { key: 'pricing', label: 'pricing' },
+    { key: 'book', label: 'book' },
   ];
   const resources: { key: RouteKey; label: keyof Dictionary['nav'] }[] = [
     { key: 'useCases', label: 'useCases' },
@@ -87,10 +87,24 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
         </div>
       </div>
 
+      {/* Standorte als zwei Adressblöcke (Runde 2). */}
+      <div style={{ maxWidth: 1280, margin: '40px auto 0', borderTop: '1px solid #1b1b1f', paddingTop: 28 }}>
+        <div style={colTitle}>{dict.footer.addressesLabel}</div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 40 }}>
+          {dict.footer.addresses.map((addr, i) => (
+            <address key={i} style={{ fontStyle: 'normal', fontSize: 14, lineHeight: 1.6, color: '#bcbcbf' }}>
+              {addr.lines.map((line, j) => (
+                <span key={j} style={{ display: 'block' }}>{line}</span>
+              ))}
+            </address>
+          ))}
+        </div>
+      </div>
+
       <div
         style={{
           maxWidth: 1280,
-          margin: '34px auto 0',
+          margin: '28px auto 0',
           borderTop: '1px solid #1b1b1f',
           paddingTop: 20,
           fontFamily: "'Space Mono', monospace",

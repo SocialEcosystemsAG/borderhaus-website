@@ -3,6 +3,11 @@
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') || 'https://borderhaus.com';
 
+// Google Termin-Kalender (Book a Call). Über Env überschreibbar; falls der
+// Share-Link nicht im iframe lädt, hier die gv=true-Embed-URL hinterlegen.
+export const BOOKING_URL =
+  process.env.NEXT_PUBLIC_BOOKING_URL || 'https://calendar.app.google/Mq3q8r8ab3BWM2bW7';
+
 export const ORG = {
   legalName: 'Social Ecosystems AG',
   brand: 'Borderhaus',
