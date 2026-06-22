@@ -5,10 +5,11 @@ type LSA = Record<Locale, string[]>;
 
 // Homepage-Strip: Wortmarken-Logos auf dunklen Kacheln (wie freigegeben).
 // logo optional: fehlt die Datei, zeigt die Komponente den Namen als Text.
-export const INTEGRATIONS: { name: string; logo?: string }[] = [
+// showName: Logo ist nur ein Icon, Name wird daneben ausgeschrieben (Shopware).
+export const INTEGRATIONS: { name: string; logo?: string; showName?: boolean }[] = [
   { name: 'Shopify', logo: '/images/logo-shopify.png' },
   { name: 'WooCommerce', logo: '/images/logo-woocommerce.png' },
-  { name: 'Shopware', logo: '/images/logo-shopware.png' },
+  { name: 'Shopware', logo: '/images/logo-shopware.png', showName: true },
   { name: 'Billbee', logo: '/images/logo-billbee.png' },
   { name: 'weclapp', logo: '/images/logo-weclapp.png' },
   { name: 'Smoasters', logo: '/images/logo-smoasters.png' },

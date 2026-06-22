@@ -84,7 +84,14 @@ export function IntegrationsStrip({ locale, dict }: { locale: Locale; dict: Dict
               }}
             >
               {ig.logo && publicAsset(ig.logo) ? (
-                <Image src={ig.logo} alt={ig.name} width={150} height={40} loading="eager" style={{ maxHeight: 36, maxWidth: '80%', width: 'auto', height: 'auto', objectFit: 'contain' }} />
+                ig.showName ? (
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 12 }}>
+                    <Image src={ig.logo} alt={ig.name} width={40} height={40} loading="eager" style={{ height: 34, width: 'auto', objectFit: 'contain' }} />
+                    <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 20, fontWeight: 700, color: '#f5f3ee', letterSpacing: '-.01em' }}>{ig.name}</span>
+                  </span>
+                ) : (
+                  <Image src={ig.logo} alt={ig.name} width={150} height={40} loading="eager" style={{ maxHeight: 36, maxWidth: '80%', width: 'auto', height: 'auto', objectFit: 'contain' }} />
+                )
               ) : (
                 <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 20, fontWeight: 700, color: '#f5f3ee', letterSpacing: '-.01em' }}>{ig.name}</span>
               )}
