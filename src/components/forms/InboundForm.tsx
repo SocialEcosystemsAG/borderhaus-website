@@ -74,6 +74,8 @@ export function InboundForm({ locale, dict }: { locale: Locale; dict: Dictionary
           consent: form.consent ? 'yes' : '',
           company_website: form.company_website,
           'cf-turnstile-response': token,
+          // Quelle: aus dem Preisrechner -> Anfrage, sonst Kontakt.
+          source: params.get('from') === 'calculator' ? 'anfrage' : 'kontakt',
           locale,
         }),
       });
