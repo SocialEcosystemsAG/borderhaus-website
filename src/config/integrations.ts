@@ -6,14 +6,15 @@ type LSA = Record<Locale, string[]>;
 // Logo-Kacheln für die Homepage-Leiste. logo optional: fehlt die Datei, zeigt
 // die Komponente den Namen als Text (kein 404). smoasters bleibt, Shopware neu.
 // [PH-Logos: logo-shopware.png von Marcel, dann hier Pfad ergänzen.]
-// dark: Logo ist hell/cremefarben und braucht eine dunkle Kachel.
-export const INTEGRATIONS: { name: string; logo?: string; dark?: boolean }[] = [
-  { name: 'Shopify', logo: '/images/logo-shopify.png' },
+// light: Logo hat dunklen/schwarzen Text und braucht eine helle Kachel.
+// Standard-Kachel ist dunkel (Strip-Look wie zuvor).
+export const INTEGRATIONS: { name: string; logo?: string; light?: boolean }[] = [
+  { name: 'Shopify', logo: '/images/logo-shopify.png', light: true },
   { name: 'WooCommerce', logo: '/images/logo-woocommerce.png' },
   { name: 'Shopware', logo: '/images/logo-shopware.png' },
   { name: 'Billbee', logo: '/images/logo-billbee.png' },
   { name: 'weclapp', logo: '/images/logo-weclapp.png' },
-  { name: 'Smoasters', logo: '/images/logo-smoasters.png', dark: true },
+  { name: 'Smoasters', logo: '/images/logo-smoasters.png' },
 ];
 
 // Detailkarten für die Integrationsseite (Runde 2): Logo, Einordnung, Pro,

@@ -71,10 +71,10 @@ export function IntegrationsStrip({ locale, dict }: { locale: Locale; dict: Dict
           {INTEGRATIONS.map((ig) => (
             <div
               key={ig.name}
-              className="bh-cardL"
+              className={ig.light ? 'bh-cardL' : 'bh-card'}
               style={{
-                background: ig.dark ? '#0b0b0c' : '#ffffff',
-                border: ig.dark ? '1px solid #26262a' : '1px solid #e6e3dc',
+                background: ig.light ? '#ffffff' : '#141417',
+                border: ig.light ? '1px solid #e6e3dc' : '1px solid #26262a',
                 borderRadius: 12,
                 padding: 24,
                 display: 'flex',
@@ -86,7 +86,7 @@ export function IntegrationsStrip({ locale, dict }: { locale: Locale; dict: Dict
               {ig.logo && publicAsset(ig.logo) ? (
                 <Image src={ig.logo} alt={ig.name} width={140} height={40} loading="eager" style={{ maxHeight: 40, maxWidth: '80%', width: 'auto', height: 'auto', objectFit: 'contain' }} />
               ) : (
-                <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 19, fontWeight: 700, color: ig.dark ? '#f5f3ee' : '#0b0b0c' }}>{ig.name}</span>
+                <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 19, fontWeight: 700, color: ig.light ? '#0b0b0c' : '#f5f3ee' }}>{ig.name}</span>
               )}
             </div>
           ))}
