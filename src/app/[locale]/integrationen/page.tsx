@@ -42,11 +42,11 @@ export default async function IntegrationsPage({ params }: { params: Promise<{ l
           {PLATFORMS.map((pf) => (
             <div key={pf.name} className="bh-cardL" style={{ background: '#fff', border: '1px solid #e6e3dc', borderRadius: 14, padding: 28, display: 'flex', flexDirection: 'column', boxShadow: '0 1px 0 rgba(0,0,0,.03)' }}>
               {/* Logo-Kachel oder Text-Fallback */}
-              <div style={{ background: '#faf8f3', border: '1px solid #ece9e1', borderRadius: 10, height: 64, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 18px', marginBottom: 18 }}>
+              <div style={{ background: '#0b0b0c', border: '1px solid #26262a', borderRadius: 10, height: 64, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 18px', marginBottom: 18 }}>
                 {pf.logo && publicAsset(pf.logo) ? (
-                  <Image src={pf.logo} alt={pf.name} width={140} height={36} loading="eager" style={{ maxHeight: 36, maxWidth: '72%', width: 'auto', height: 'auto', objectFit: 'contain' }} />
+                  <Image src={pf.logo} alt={pf.name} width={140} height={32} loading="eager" style={{ maxHeight: 32, maxWidth: '72%', width: 'auto', height: 'auto', objectFit: 'contain' }} />
                 ) : (
-                  <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 20, fontWeight: 700, color: '#0b0b0c' }}>{pf.name}</span>
+                  <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 20, fontWeight: 700, color: '#f5f3ee' }}>{pf.name}</span>
                 )}
               </div>
 

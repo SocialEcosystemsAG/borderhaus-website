@@ -1,9 +1,11 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n';
 import { path } from '@/i18n/routes';
 import { Icon } from '@/components/brand/Icon';
 import { INTEGRATIONS } from '@/config/integrations';
+import { publicAsset } from '@/lib/assets';
 
 const CREAM = '#f5f3ee';
 
@@ -81,7 +83,11 @@ export function IntegrationsStrip({ locale, dict }: { locale: Locale; dict: Dict
                 height: 96,
               }}
             >
-              <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 20, fontWeight: 700, color: '#f5f3ee', letterSpacing: '-.01em' }}>{ig.name}</span>
+              {ig.logo && publicAsset(ig.logo) ? (
+                <Image src={ig.logo} alt={ig.name} width={150} height={40} loading="eager" style={{ maxHeight: 36, maxWidth: '80%', width: 'auto', height: 'auto', objectFit: 'contain' }} />
+              ) : (
+                <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 20, fontWeight: 700, color: '#f5f3ee', letterSpacing: '-.01em' }}>{ig.name}</span>
+              )}
             </div>
           ))}
         </div>
