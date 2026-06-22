@@ -10,6 +10,9 @@ import { Icon } from '@/components/brand/Icon';
 import { Blitz } from '@/components/brand/Marks';
 import { BreadcrumbJsonLd } from '@/components/seo/JsonLd';
 
+// Kunden-Logos mit eingebranntem schwarzen Hintergrund kommen auf dunkle Kacheln.
+const LOGO_DARK = new Set(['Reslides']);
+
 export async function generateMetadata({
   params,
 }: {
@@ -66,17 +69,29 @@ export default async function ImpactPage({ params }: { params: Promise<{ locale:
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(290px,1fr))', gap: 22 }}>
             {p.customers.map((cu) => (
               <div key={cu.name} className="bh-cardL" style={{ background: '#fff', border: '1px solid #e6e3dc', borderRadius: 18, padding: 30, display: 'flex', flexDirection: 'column', boxShadow: '0 1px 0 rgba(0,0,0,.03)' }}>
-                <div style={{ marginBottom: 18 }}>
-                  {publicAsset(cu.logo) ? (
-                    <div style={{ height: 50, display: 'flex', alignItems: 'center' }}>
-                      <Image src={cu.logo} alt={cu.name} width={160} height={50} style={{ maxHeight: 50, maxWidth: 180, width: 'auto', height: 'auto', objectFit: 'contain' }} />
+                {(() => {
+                  const dark = LOGO_DARK.has(cu.name);
+                  const tile: React.CSSProperties = {
+                    height: 72,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '0 20px',
+                    borderRadius: 12,
+                    marginBottom: 18,
+                    background: dark ? '#0b0b0c' : '#ffffff',
+                    border: dark ? '1px solid #2a2a2f' : '1px solid #ece9e1',
+                  };
+                  return (
+                    <div style={tile}>
+                      {publicAsset(cu.logo) ? (
+                        <Image src={cu.logo} alt={cu.name} width={180} height={48} style={{ maxHeight: 44, maxWidth: '85%', width: 'auto', height: 'auto', objectFit: 'contain' }} />
+                      ) : (
+                        <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 19, fontWeight: 700, color: dark ? '#f5f3ee' : '#0b0b0c' }}>{cu.name}</span>
+                      )}
                     </div>
-                  ) : (
-                    <div style={{ height: 50, minWidth: 120, display: 'inline-flex', alignItems: 'center', padding: '0 18px', background: '#faf8f3', border: '1px dashed #d6d1c6', borderRadius: 10, fontFamily: "'Space Grotesk', sans-serif", fontSize: 19, fontWeight: 700, color: '#0b0b0c' }}>
-                      {cu.name}
-                    </div>
-                  )}
-                </div>
+                  );
+                })()}
                 <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 12, letterSpacing: '.16em', textTransform: 'uppercase', color: '#ff4a1c', marginBottom: 14 }}>{cu.tag}</div>
                 <p style={{ fontSize: 16, lineHeight: 1.55, color: '#3a3a40', margin: 0, flex: 1 }}>{cu.impact}</p>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, borderTop: '1px solid #ece9e1', marginTop: 24, paddingTop: 22 }}>

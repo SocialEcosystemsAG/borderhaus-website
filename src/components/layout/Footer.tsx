@@ -45,7 +45,7 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
           </div>
           {/* EU-Bio-Logo als Trust-Signal. */}
           <Image
-            src="/images/eu-organic-logo.png"
+            src="/images/logo-eu-organic.png"
             alt={locale === 'de' ? 'EU-Bio-Logo' : 'EU organic logo'}
             width={75}
             height={50}

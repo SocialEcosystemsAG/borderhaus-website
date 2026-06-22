@@ -5,6 +5,7 @@ import type { Dictionary } from '@/i18n';
 import { path } from '@/i18n/routes';
 import { Icon } from '@/components/brand/Icon';
 import { INTEGRATIONS } from '@/config/integrations';
+import { publicAsset } from '@/lib/assets';
 
 const CREAM = '#f5f3ee';
 
@@ -69,7 +70,7 @@ export function IntegrationsStrip({ locale, dict }: { locale: Locale; dict: Dict
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))', gap: 14 }}>
           {INTEGRATIONS.map((ig) => (
             <div key={ig.name} className="bh-card" style={{ background: '#141417', border: '1px solid #26262a', borderRadius: 12, padding: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', height: 96 }}>
-              {ig.logo ? (
+              {ig.logo && publicAsset(ig.logo) ? (
                 <Image src={ig.logo} alt={ig.name} width={120} height={36} loading="eager" style={{ maxHeight: 36, maxWidth: '78%', width: 'auto', height: 'auto', objectFit: 'contain' }} />
               ) : (
                 <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 19, fontWeight: 700, color: '#f5f3ee' }}>{ig.name}</span>

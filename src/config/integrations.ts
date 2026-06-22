@@ -9,7 +9,7 @@ type LSA = Record<Locale, string[]>;
 export const INTEGRATIONS: { name: string; logo?: string }[] = [
   { name: 'Shopify', logo: '/images/logo-shopify.png' },
   { name: 'WooCommerce', logo: '/images/logo-woocommerce.png' },
-  { name: 'Shopware' },
+  { name: 'Shopware', logo: '/images/logo-shopware.png' },
   { name: 'Billbee', logo: '/images/logo-billbee.png' },
   { name: 'weclapp', logo: '/images/logo-weclapp.png' },
   { name: 'Smoasters', logo: '/images/logo-smoasters.png' },
@@ -72,7 +72,7 @@ export const PLATFORMS: Platform[] = [
   },
   {
     name: 'Shopware',
-    logo: undefined,
+    logo: '/images/logo-shopware.png',
     category: { de: 'DACH-Marktführer, modular, B2B-stark', en: 'DACH market leader, modular, strong B2B' },
     pros: {
       de: [

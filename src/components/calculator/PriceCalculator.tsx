@@ -7,7 +7,7 @@ import type { Dictionary } from '@/i18n';
 import { path } from '@/i18n/routes';
 import { compute, fmt, fmt0, DEFAULT_STATE, type CalculatorState, type WeightKey } from '@/lib/pricing';
 
-// Preisrechner Runde 2: Pro-Sendung prominent, Monatssicht sekundär.
+// Preisrechner Runde 2b: Gesamtkosten pro Monat als Hauptausgabe.
 const chip = (active: boolean): React.CSSProperties =>
   active
     ? { background: '#ff4a1c', color: '#0b0b0c', fontWeight: 700, border: '1px solid #ff4a1c' }
@@ -19,7 +19,7 @@ export function PriceCalculator({ locale, dict }: { locale: Locale; dict: Dictio
   const r = useMemo(() => compute(s), [s]);
   const router = useRouter();
   const set = (patch: Partial<CalculatorState>) => setS((prev) => ({ ...prev, ...patch }));
-  const f = (n: number) => fmt(n, locale);
+  const f0 = (n: number) => fmt0(n, locale);
 
   function requestQuote() {
     const de = locale === 'de';
@@ -33,7 +33,8 @@ export function PriceCalculator({ locale, dict }: { locale: Locale; dict: Dictio
       (de ? 'Märkte ' : 'markets ') + markets + ', ' +
       (de ? 'Gewicht ' : 'weight ') + (s.weight === 'light' ? c.cwS : s.weight === 'medium' ? c.cwM : c.cwL) +
       (services ? `, ${services}` : '') + '. ' +
-      (de ? 'Geschätzt ab ' : 'Estimated from ') + f(r.perShipment) + (de ? ' pro Sendung.' : ' per shipment.');
+      (de ? 'Geschätzte Gesamtkosten ' : 'Estimated total ') + `${f0(r.monthlyLow)} – ${f0(r.monthlyHigh)}` +
+      (de ? ' pro Monat.' : ' per month.');
     const params = new URLSearchParams({ from: 'calculator', message: summary });
     router.push(`${path(locale, 'contact')}?${params.toString()}`);
   }
@@ -57,6 +58,9 @@ export function PriceCalculator({ locale, dict }: { locale: Locale; dict: Dictio
         </Slider>
         <Slider label={c.cDeliveries} value={<span style={valStyle}>{s.deliveries}</span>}>
           <input className="bh-range" type="range" min={1} max={60} step={1} value={s.deliveries} onChange={(e) => set({ deliveries: +e.target.value })} />
+        </Slider>
+        <Slider label={c.cGoodsValue} value={<span style={valStyle}>{fmt0(s.goodsValue, locale)}</span>}>
+          <input className="bh-range" type="range" min={0} max={500000} step={1000} value={s.goodsValue} onChange={(e) => set({ goodsValue: +e.target.value })} />
         </Slider>
 
         <div>
@@ -91,29 +95,32 @@ export function PriceCalculator({ locale, dict }: { locale: Locale; dict: Dictio
         </div>
       </div>
 
-      {/* Ergebnis dunkel, sticky. Pro Sendung prominent. */}
+      {/* Ergebnis dunkel, sticky. Gesamtkosten pro Monat prominent. */}
       <div style={{ position: 'sticky', top: 90, color: '#f5f3ee', background: 'linear-gradient(180deg,#16171c,#0e0e10)', border: '1px solid #2a2b30', borderRadius: 16, padding: 'clamp(24px,3vw,34px)' }}>
         <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 13, letterSpacing: '.16em', textTransform: 'uppercase', color: '#7d7d84' }}>{c.cResultLabel}</div>
-        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(30px,4vw,46px)', fontWeight: 700, lineHeight: 1.05, margin: '10px 0 2px' }}>
-          {c.cFrom} {f(r.perShipment)}
+        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 'clamp(28px,3.6vw,42px)', fontWeight: 700, lineHeight: 1.05, margin: '10px 0 2px' }}>
+          {f0(r.monthlyLow)} <span style={{ color: '#7d7d84' }}>&ndash;</span> {f0(r.monthlyHigh)}
         </div>
-        <div style={{ fontSize: 14, color: '#7d7d84', marginBottom: 20 }}>{c.cPerShipment}</div>
-
-        <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 12, letterSpacing: '.12em', textTransform: 'uppercase', color: '#7d7d84', marginBottom: 10 }}>{c.cBreakdownLabel}</div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, borderTop: '1px solid #26262a', paddingTop: 16 }}>
-          <Row label={c.cBreakPick} value={f(r.pick)} />
-          <Row label={c.cBreakPack} value={f(r.packaging)} />
-          <Row label={c.cBreakShip} value={f(r.shipping)} />
-          <Row label={c.cBreakStorage} value={f(r.storage)} />
-          {r.returns > 0 && <Row label={c.cBreakReturns} value={f(r.returns)} />}
-          {r.valueAdd > 0 && <Row label={c.cBreakValue} value={f(r.valueAdd)} />}
+        <div style={{ fontSize: 14, color: '#7d7d84' }}>{c.cPerMonth}</div>
+        {/* Pro-Sendung nur klein als Nebeninfo */}
+        <div style={{ fontSize: 13, color: '#9a9aa0', marginTop: 6 }}>
+          &asymp; {fmt(r.perShipment, locale)} {c.cPerShipmentNote}
         </div>
 
-        {/* Monatssicht sekundär */}
-        <div style={{ marginTop: 18, borderTop: '1px solid #26262a', paddingTop: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <Row label={c.cMonthlyLabel} value={`${fmt0(r.monthlyLow, locale)} – ${fmt0(r.monthlyHigh, locale)}`} strong />
-          <Row label={c.cFlat} value={fmt0(r.monthlyFlat, locale)} muted />
-          <Row label={c.cSetup} value={fmt0(r.setupOnce, locale)} muted />
+        <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 12, letterSpacing: '.12em', textTransform: 'uppercase', color: '#7d7d84', margin: '20px 0 10px' }}>{c.cBreakdownLabel}</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 9, borderTop: '1px solid #26262a', paddingTop: 16 }}>
+          <Row label={c.cBreakStorage} value={f0(r.storage)} />
+          <Row label={c.cBreakInbound} value={f0(r.inbound)} />
+          <Row label={c.cBreakPick} value={f0(r.pickpack)} />
+          <Row label={c.cBreakShip} value={f0(r.shipping)} />
+          {r.returns > 0 && <Row label={c.cBreakReturns} value={f0(r.returns)} />}
+          {r.valueAdd > 0 && <Row label={c.cBreakValue} value={f0(r.valueAdd)} />}
+          <Row label={c.cBreakInsurance} value={f0(r.insurance)} />
+          <Row label={c.cFlat} value={f0(r.monthlyFlat)} />
+        </div>
+
+        <div style={{ marginTop: 14, borderTop: '1px solid #26262a', paddingTop: 14 }}>
+          <Row label={c.cSetup} value={f0(r.setupOnce)} muted />
         </div>
 
         <button type="button" onClick={requestQuote} className="bh-cta" style={{ display: 'block', width: '100%', textAlign: 'center', marginTop: 22, background: '#ff4a1c', color: '#0b0b0c', fontWeight: 700, fontSize: 16, padding: 14, borderRadius: 10, border: 'none', cursor: 'pointer' }}>
@@ -137,11 +144,11 @@ function Slider({ label, value, children }: { label: string; value: React.ReactN
   );
 }
 
-function Row({ label, value, strong, muted }: { label: string; value: string; strong?: boolean; muted?: boolean }) {
+function Row({ label, value, muted }: { label: string; value: string; muted?: boolean }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: strong ? 15 : 14, gap: 12 }}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14, gap: 12 }}>
       <span style={{ color: muted ? '#7d7d84' : '#bcbcbf' }}>{label}</span>
-      <span style={{ fontFamily: "'Space Mono', monospace", color: strong ? '#f5f3ee' : muted ? '#7d7d84' : '#f5f3ee', fontWeight: strong ? 700 : 400 }}>{value}</span>
+      <span style={{ fontFamily: "'Space Mono', monospace", color: muted ? '#7d7d84' : '#f5f3ee' }}>{value}</span>
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { pageMetadata } from '@/lib/seo';
 import { PageHero, CreamSection } from '@/components/ui/PageHero';
 import { BreadcrumbJsonLd } from '@/components/seo/JsonLd';
 import { PLATFORMS } from '@/config/integrations';
+import { publicAsset } from '@/lib/assets';
 
 export async function generateMetadata({
   params,
@@ -42,7 +43,7 @@ export default async function IntegrationsPage({ params }: { params: Promise<{ l
             <div key={pf.name} className="bh-cardL" style={{ background: '#fff', border: '1px solid #e6e3dc', borderRadius: 14, padding: 28, display: 'flex', flexDirection: 'column', boxShadow: '0 1px 0 rgba(0,0,0,.03)' }}>
               {/* Logo-Kachel oder Text-Fallback */}
               <div style={{ background: '#0b0b0c', borderRadius: 10, height: 64, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 18px', marginBottom: 18 }}>
-                {pf.logo ? (
+                {pf.logo && publicAsset(pf.logo) ? (
                   <Image src={pf.logo} alt={pf.name} width={120} height={28} loading="eager" style={{ maxHeight: 28, maxWidth: '70%', width: 'auto', height: 'auto', objectFit: 'contain' }} />
                 ) : (
                   <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 20, fontWeight: 700, color: '#f5f3ee' }}>{pf.name}</span>
