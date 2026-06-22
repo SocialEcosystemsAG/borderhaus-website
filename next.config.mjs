@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Self-contained Server unter .next/standalone/server.js. Macht den Deploy auf
+  // Node-Hosts robust, die einen Startfile bzw. ein Start-Kommando erwarten.
+  output: 'standalone',
   // ccTLD-Domains (borderhaus.de/.nl/.at/.org) werden per 301 auf borderhaus.com
   // gemappt. Das geschieht idealerweise auf DNS-/Hosting-Ebene (Hostinger).
   // Pfad-Redirects als Fallback:
