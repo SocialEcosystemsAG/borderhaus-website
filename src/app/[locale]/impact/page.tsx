@@ -10,8 +10,9 @@ import { Icon } from '@/components/brand/Icon';
 import { Blitz } from '@/components/brand/Marks';
 import { BreadcrumbJsonLd } from '@/components/seo/JsonLd';
 
-// Kunden-Logos mit eingebranntem schwarzen Hintergrund kommen auf dunkle Kacheln.
-const LOGO_DARK = new Set(['Reslides']);
+// Kunden-Logos mit eingebranntem hellem Hintergrund kommen auf helle Kacheln.
+// Aktuell brauchen alle eine helle Kachel (auch Reslides, jetzt schwarz auf hell).
+const LOGO_DARK = new Set<string>([]);
 
 export async function generateMetadata({
   params,
@@ -92,6 +93,7 @@ export default async function ImpactPage({ params }: { params: Promise<{ locale:
                     </div>
                   );
                 })()}
+                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 20, fontWeight: 700, color: '#0b0b0c', letterSpacing: '-.01em', marginBottom: 6 }}>{cu.name}</div>
                 <div style={{ fontFamily: "'Space Mono', monospace", fontSize: 12, letterSpacing: '.16em', textTransform: 'uppercase', color: '#ff4a1c', marginBottom: 14 }}>{cu.tag}</div>
                 <p style={{ fontSize: 16, lineHeight: 1.55, color: '#3a3a40', margin: 0, flex: 1 }}>{cu.impact}</p>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, borderTop: '1px solid #ece9e1', marginTop: 24, paddingTop: 22 }}>
