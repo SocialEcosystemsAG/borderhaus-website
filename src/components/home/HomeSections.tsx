@@ -1,11 +1,9 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n';
 import { path } from '@/i18n/routes';
 import { Icon } from '@/components/brand/Icon';
 import { INTEGRATIONS } from '@/config/integrations';
-import { publicAsset } from '@/lib/assets';
 
 const CREAM = '#f5f3ee';
 
@@ -71,10 +69,10 @@ export function IntegrationsStrip({ locale, dict }: { locale: Locale; dict: Dict
           {INTEGRATIONS.map((ig) => (
             <div
               key={ig.name}
-              className={ig.light ? 'bh-cardL' : 'bh-card'}
+              className="bh-card"
               style={{
-                background: ig.light ? '#ffffff' : '#141417',
-                border: ig.light ? '1px solid #e6e3dc' : '1px solid #26262a',
+                background: '#141417',
+                border: '1px solid #26262a',
                 borderRadius: 12,
                 padding: 24,
                 display: 'flex',
@@ -83,11 +81,7 @@ export function IntegrationsStrip({ locale, dict }: { locale: Locale; dict: Dict
                 height: 96,
               }}
             >
-              {ig.logo && publicAsset(ig.logo) ? (
-                <Image src={ig.logo} alt={ig.name} width={140} height={40} loading="eager" style={{ maxHeight: 40, maxWidth: '80%', width: 'auto', height: 'auto', objectFit: 'contain' }} />
-              ) : (
-                <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 19, fontWeight: 700, color: ig.light ? '#0b0b0c' : '#f5f3ee' }}>{ig.name}</span>
-              )}
+              <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: 20, fontWeight: 700, color: '#f5f3ee', letterSpacing: '-.01em' }}>{ig.name}</span>
             </div>
           ))}
         </div>
