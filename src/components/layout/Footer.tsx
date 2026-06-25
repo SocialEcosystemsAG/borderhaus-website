@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { Locale } from '@/i18n/config';
 import type { Dictionary } from '@/i18n';
-import { path, type RouteKey } from '@/i18n/routes';
+import { path, legalPath, type RouteKey, type LegalKey } from '@/i18n/routes';
 import { Wordmark } from '@/components/brand/Marks';
 
 // Footer exakt aus Borderhaus_Homepage_v2.html: dunkel, 4-Spalten-Grid.
@@ -18,7 +18,8 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
     { key: 'integrations', label: 'integrations' },
     { key: 'contact', label: 'contact' },
   ];
-  const legal: { key: RouteKey; label: string }[] = [
+  // Rechtsseiten pro Sprache: DE -> /de/impressum..., EN -> /en/imprint...
+  const legal: { key: LegalKey; label: string }[] = [
     { key: 'imprint', label: dict.pages.imprint.title },
     { key: 'privacy', label: dict.pages.privacy.title },
     { key: 'terms', label: dict.pages.terms.title },
@@ -79,7 +80,7 @@ export function Footer({ locale, dict }: { locale: Locale; dict: Dictionary }) {
           <div style={colTitle}>{dict.footer.legal}</div>
           <div className="flex flex-col gap-2.5">
             {legal.map((item) => (
-              <Link key={item.key} href={path(locale, item.key)} className={linkStyle}>
+              <Link key={item.key} href={legalPath(locale, item.key)} className={linkStyle}>
                 {item.label}
               </Link>
             ))}

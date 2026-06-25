@@ -254,9 +254,9 @@ const de = {
         { n: '03', t: 'Start, sobald dein Bestand auf der Grenze liegt.' },
       ],
     },
-    imprint: { title: 'Impressum', lead: '[PH: Impressum-Inhalt von Marcel.]' },
-    privacy: { title: 'Datenschutz', lead: '[PH: Datenschutzerklärung von Marcel.]' },
-    terms: { title: 'AGB', lead: '[PH: AGB-Inhalt von Marcel.]' },
+    imprint: { title: 'Impressum', lead: 'Impressum der Social Ecosystems AG.' },
+    privacy: { title: 'Datenschutz', lead: 'Datenschutzerklärung von Borderhaus.' },
+    terms: { title: 'AGB', lead: 'Allgemeine Geschäftsbedingungen von Borderhaus.' },
   },
   // Impact-Seite exakt nach Borderhaus_Impact_Rhythmus.html (Rhythmus-Variante).
   impactPage: {
@@ -273,7 +273,7 @@ const de = {
     joinCta: 'Anfragen',
     pledgeLabel: 'Borderhaus Impact Pledge',
     pledgeT: 'Unsere öffentliche Zusage',
-    pledgeSub: 'Fünf Punkte, an denen wir uns messen lassen. Entwurf, final von Marcel bestätigt.',
+    pledgeSub: 'Fünf Punkte, an denen wir uns messen lassen.',
     customers: [
       { name: 'Fairafric', logo: '/images/customer-fairafric.png', tag: 'Bean to Bar in Ghana', impact: 'Schokolade komplett in Ghana produziert, solarbetrieben, faire Löhne. Die Wertschöpfung bleibt im Ursprungsland.', fact: '100%', factL: 'Produktion im Ursprung' },
       { name: 'KOA', logo: '/images/customer-koa.png', tag: 'Zero-Waste Kakao', impact: 'Macht aus Kakaofrucht-Pulpe neue Produkte. Zusatzeinkommen für Bauern, weniger Food-Waste.', fact: '0', factL: 'Verschwendung der Pulpe' },

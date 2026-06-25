@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
-import { isLocale, type Locale } from '@/i18n/config';
+import { notFound } from 'next/navigation';
+import { isLocale } from '@/i18n/config';
 import { getDictionary } from '@/i18n';
-import { pageMetadata } from '@/lib/seo';
+import { legalAlternates } from '@/i18n/routes';
 import { LegalLayout } from '@/components/ui/LegalLayout';
-import { terms } from '@/config/legal';
+import { legal } from '@/config/legal';
 
 export async function generateMetadata({
   params,
@@ -11,14 +12,17 @@ export async function generateMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  const loc: Locale = isLocale(locale) ? locale : 'de';
-  const dict = getDictionary(loc);
-  return pageMetadata({ locale: loc, routeKey: 'terms', title: dict.pages.terms.title });
+  const dict = getDictionary(isLocale(locale) ? locale : 'de');
+  const alt = legalAlternates('terms');
+  return {
+    title: dict.pages.terms.title,
+    alternates: { canonical: alt.canonicalDe, languages: alt.languages },
+  };
 }
 
-export default async function TermsPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function TermsDePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const loc: Locale = isLocale(locale) ? locale : 'de';
-  const dict = getDictionary(loc);
-  return <LegalLayout title={dict.pages.terms.title} doc={terms} />;
+  if (locale !== 'de') notFound();
+  const dict = getDictionary('de');
+  return <LegalLayout title={dict.pages.terms.title} doc={legal.de.terms} />;
 }

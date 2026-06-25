@@ -249,9 +249,9 @@ const en: Dictionary = {
         { n: '03', t: 'Start as soon as your inventory sits on the border.' },
       ],
     },
-    imprint: { title: 'Imprint', lead: '[PH: Imprint content from Marcel.]' },
-    privacy: { title: 'Privacy', lead: '[PH: Privacy policy from Marcel.]' },
-    terms: { title: 'Terms', lead: '[PH: Terms content from Marcel.]' },
+    imprint: { title: 'Imprint', lead: 'Imprint of Social Ecosystems AG.' },
+    privacy: { title: 'Privacy', lead: 'Privacy policy of Borderhaus.' },
+    terms: { title: 'Terms', lead: 'Terms and conditions of Borderhaus.' },
   },
   impactPage: {
     heroLabel: 'Impact is the heart',
@@ -267,7 +267,7 @@ const en: Dictionary = {
     joinCta: 'Get in touch',
     pledgeLabel: 'Borderhaus Impact Pledge',
     pledgeT: 'Our public commitment',
-    pledgeSub: 'Five points we hold ourselves to. Draft, to be confirmed by Marcel.',
+    pledgeSub: 'Five points we hold ourselves to.',
     customers: [
       { name: 'Fairafric', logo: '/images/customer-fairafric.png', tag: 'Bean to bar in Ghana', impact: 'Chocolate made entirely in Ghana, solar-powered, fair wages. Value stays at origin.', fact: '100%', factL: 'made at origin' },
       { name: 'KOA', logo: '/images/customer-koa.png', tag: 'Zero-waste cacao', impact: 'Turns cacao pulp into new products. Extra income for farmers, less food waste.', fact: '0', factL: 'pulp wasted' },
