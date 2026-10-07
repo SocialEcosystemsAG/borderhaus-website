@@ -4,7 +4,7 @@
 // Zoho-Snapshot, Historie, Overrides. Ausgabe: <outDir>/v<N>/ (neue Version je Lauf).
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
-import { booksToSnapshot, type BooksDetail, type BooksListRow } from "../src/zoho.ts";
+import { booksToSnapshot, inventoryToSnapshot, type BooksDetail, type BooksListRow } from "../src/zoho.ts";
 import { DEFAULT_MAPPING, withExclusions } from "../src/sku-mapping.ts";
 import { buildRun, renderReview, type RunConfig } from "../src/run.ts";
 import type { HistoryEntry, Override } from "../src/types.ts";
@@ -15,8 +15,10 @@ type Spec = {
   today: string;
   runNumber: number;
   config: string;
-  zohoList: string;
-  zohoDetails: string[];
+  /** Paketdaten aus bin/zoho-packages.ts (Zielweg). Gesetzt -> zohoList/zohoDetails werden ignoriert. */
+  inventory?: string;
+  zohoList?: string;
+  zohoDetails?: string[];
   history: string[];
   overrides: string;
   exclusions: string;
@@ -32,11 +34,18 @@ const spec = JSON.parse(readFileSync(specPath, "utf8")) as Spec;
 const [year, month] = spec.month.split("-").map(Number);
 
 const config = JSON.parse(readFileSync(p(spec.config), "utf8")) as RunConfig;
-const list = JSON.parse(readFileSync(p(spec.zohoList), "utf8")) as BooksListRow[];
-const details = spec.zohoDetails.flatMap((f) =>
-  readFileSync(p(f), "utf8").trim().split("\n").map((l) => JSON.parse(l) as BooksDetail),
-);
-const snapshot = booksToSnapshot(list, details, new Date().toISOString());
+function loadSnapshot() {
+  if (spec.inventory) {
+    const inv = JSON.parse(readFileSync(p(spec.inventory), "utf8"));
+    return inventoryToSnapshot(inv.packages, inv.salesorders, inv.range, inv.fetchedAt);
+  }
+  const list = JSON.parse(readFileSync(p(spec.zohoList!), "utf8")) as BooksListRow[];
+  const details = (spec.zohoDetails ?? []).flatMap((f) =>
+    readFileSync(p(f), "utf8").trim().split("\n").map((l) => JSON.parse(l) as BooksDetail),
+  );
+  return booksToSnapshot(list, details, new Date().toISOString());
+}
+const snapshot = loadSnapshot();
 snapshot.openOrders = spec.openOrders ?? [];
 const excl = JSON.parse(readFileSync(p(spec.exclusions), "utf8"));
 const mapping = withExclusions(DEFAULT_MAPPING, excl.exclusions, {

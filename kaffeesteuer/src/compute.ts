@@ -188,7 +188,7 @@ export function computeMonth(
             baseSku(o.sku) === baseSku(line.sku),
         );
         const anySetQty = overrides.some((o) => o.action === "set_quantity" && o.orderNumber === order.orderNumber);
-        const ordered = qty;
+        const ordered = line.orderedQuantity ?? qty;
         const before = reported.get(`${order.orderNumber}|${baseSku(line.sku)}`) ?? 0;
         const kg = { kgPerUnit: res.kgPerUnit, orderedQuantity: ordered, reportedBefore: before };
         let note: string | undefined;

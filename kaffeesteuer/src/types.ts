@@ -14,6 +14,8 @@ export type SourceLine = {
   /** Kit/Kombi-Artikel: Zusammensetzung laut Zoho (mapped_items). */
   isCombo?: boolean;
   components?: { sku: string; quantity: number }[];
+  /** Bestellmenge der Auftragszeile, wenn die Zeile aus einem Paket stammt (Teilversand). */
+  orderedQuantity?: number;
 };
 
 /**
