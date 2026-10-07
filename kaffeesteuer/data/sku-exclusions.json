@@ -1,0 +1,378 @@
+{
+ "version": 2,
+ "validFrom": "2026-09-01",
+ "changedBy": "kaffeesteuer-lauf 2026-09",
+ "changeNote": "Geräte/Zubehör/Fremdware aus Läufen August (Regression) und September 2026 (Lieferadresse DE)",
+ "exclusions": [
+  {
+   "sku": "1129",
+   "name": "Fellow Stagg  XF  Filters (45 Stück) | Filterpapier",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "1136",
+   "name": "Fellow Stagg X Dripper Set",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "1148",
+   "name": "Fellow Prismo Wiederverwendbarer Filter für Aeropress",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "1168CG04",
+   "name": "Fellow Athmos Vakuumkanister 0,4l Glas",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "1171PRO-MB-EU",
+   "name": "Fellow Corvo EKG Pro 0.9L | Matte Black 220V",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "1171PRO-WN-EU",
+   "name": "Fellow Corvo EKG Pro 0.9L | Matte Black + Walnut Handle, 220V",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "1209MBLA12",
+   "name": "Fellow Carter Everywhere Mug | Thermobecher | 350 ml",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "1214CGR12",
+   "name": "Fellow Thermobecher Carter Move Mug | 354 ml cargo green",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "1214SBL12",
+   "name": "Fellow Thermobecher Carter Move Mug | 354 ml stone blue",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "1222PRO-MB-EU-A",
+   "name": "elektrischer Wasserkocher von Fellow | Stagg EKG pro 0,9 L in matt schwarz",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "1222PRO-WN-EU",
+   "name": "Stagg EKG Pro, Matte Black + Walnut Handle, 0.9L, 220V, Type F (EU)",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "15R11",
+   "name": "AeroPress Go Coffee Maker | Kaffeebereiter inkl. 100 Filter",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "2007",
+   "name": "Comandante Kaffeemühle C40 MK4 Nitro Blade | Classic Coating - Black",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "23169",
+   "name": "Cleandrip Reinigungsmittel für Moccamaster | 250ml",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "3760",
+   "name": "Comandante Socks - SHERBERT - Size 42-46",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "53976",
+   "name": "Moccamaster KGB Select Pastell Green",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "53995",
+   "name": "Moccamaster KBG Select/Forest Green",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "53996",
+   "name": "Moccamaster KBG Select/Black",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "53998",
+   "name": "Moccamaster KBG Select/Pink",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "54010",
+   "name": "Moccamaster KBG Select/Yellow Pepper",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "70TGD050AA001",
+   "name": "Timemore Sculptor 078 | elektrische Kaffeemühle/078 Pour-Over",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "80R11",
+   "name": "AeroPress Coffee Maker Kaffeebereiter, inkl. 100 Filtern",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "81F24",
+   "name": "AeroPress Paper Micro-Filters 350 Sheets Standard - White",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "85022",
+   "name": "Moccamaster Kaffeefilter Nr. 4, 100 Stück",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "85R11",
+   "name": "AeroPress Coffee Maker - Original",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "AL008",
+   "name": "Acaia Lunar 2021 Digitale Waage mit USB-C, Flow-Rate",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "AL013",
+   "name": "Acaia Lunar - Space Gray",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "AP008",
+   "name": "Acaia Pearl Digitale Waage mit Bluetooth, Black, neues Modell",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "AUL101",
+   "name": "Acaia Umbra Duo",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "C40-MK4NB-AC",
+   "name": "Comandante Kaffeemühle C40 MK4 Nitro Blade | Premium Wood - American Cherry",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "CAPCMSS12",
+   "name": "Fellow Thermobecher Carter Move Mug | Capsule Collection | 354ml Sand Dune",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "CAPCMTR12",
+   "name": "Fellow Thermobecher Carter Move Mug | Capsule Collection",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "D1211MB-EU-SB",
+   "name": "Fellow Ode Brew Grinder, Generation 2, elektrische Kaffeemühle Schwarz",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "D1211MW-EU-SB",
+   "name": "Fellow Ode Brew Grinder Gen 2 | Elektrische Kaffeemühle von Fellow",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "D1300PROS-EU",
+   "name": "Fellow Tally Scale Pro Studio Edition, Glass Top, Waage",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "EACC07-NA",
+   "name": "Electric Atmos 0,7L | elektronischer Vakuumbehälter von Fellow",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "EAMMB07-NA",
+   "name": "Electric Atmos 0,7L | elektronischer Vakuumbehälter von Fellow | Matt Schwarz 0.7L",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "EAMW07-NA",
+   "name": "Electric Atmos Vacuum Canister, Matte White, 0.7L (US/EU)",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "EAMW12-NA",
+   "name": "Electric Atmos Vacuum Canister, Matte White, 1.2L (US/EU)",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "EBR3C-EU",
+   "name": "Fellow Aiden Precision Coffee Maker / Malted Chocolate",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "EBRMW-EU",
+   "name": "Aiden Precision Coffee Maker, Matte White, 220V, Type F (EU)",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "EBRWL-EU",
+   "name": "Fellow Aiden Precision Coffee Maker Woodland",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "EMS-1B",
+   "name": "Mobile Mill Stick + Comandante Adapter",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "EU-EBRMB-E",
+   "name": "Aiden Precision Coffee Maker | Filtermaschine von Fellow",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "FACS40PB",
+   "name": "Aiden Filters, Cone Single Brew Filters (Set of 40) - Polybag",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "FAFB40PB",
+   "name": "Aiden Filters, Flat Bottom Batch Brew Filters (Set of 50) - Polybag",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "FC-100",
+   "name": "Chemex Papierfilter | weiß, rund, gefaltet, für 6, 8, 10 Tassen",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "IF11180066",
+   "name": "Timemore Black Mirror Basic Mini | Black",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "PMGA06",
+   "name": "Fellow Pirch Cappuccino Glasses-Garnet",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "SB-O-U-25",
+   "name": "Raw Organic Shea Butter",
+   "reason": "kein Röstkaffee: Fremdware (Shea Butter)"
+  },
+  {
+   "sku": "ZB-VCF-02-50W",
+   "name": "Zebrang Paper Filter V60 02 - White 50 Sheets",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "1169MW06",
+   "name": "Fellow Monty Milk Art Cups | Kaffeebecher | 192ml matte white",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "1169MW04",
+   "name": "Fellow Monty Milk Art Cups | Kaffeebecher | 133ml matte whitewhite",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "1169MW03",
+   "name": "Fellow Monty Milk Art Cups | Kaffeebecher/Matte White, Espresso, 3oz / 88ml Set of 2-",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "1169MB11",
+   "name": "Fellow Monty Milk Art Cups | Kaffeebecher | 325ml matte black",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "53997",
+   "name": "Moccamaster KBG Select/Pastell Green",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "1168MW12",
+   "name": "Fellow Atmos Canister Vakuum Aufbewahrungsdose für Kaffeebohnen 1.200 ml / Matt-Weiß",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "IF11180066_",
+   "name": "Timemore C3 ESP PRO",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "70TGD021AA001",
+   "name": "Timemore Chestnut Nano Kaffeemühle",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "C40-MK4NB-SW",
+   "name": "Comandante C40 MK4 Nitro Blade Black (Standard)",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "1214MBLA12",
+   "name": "Fellow Thermobecher Carter Move Mug (Matte Black, 354 ml)",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "AA0034",
+   "name": "Acaia Lunar Carrying Case Tasche schwarz",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "1214SR12",
+   "name": "Fellow Thermobecher Carter Move Mug | 354 ml sporty green",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "1222PRO-SG-EU",
+   "name": "Fellow Stagg EKG Pro | Smoke Green + Maple Handle, 220V",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "1214MBLA08",
+   "name": "Carter Move Mug, Matte Black, 8oz / 236ml",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "CAPCCSS16",
+   "name": "Fellow Thermobecher Carter für Kaltgetränke | Cold Tumbler | Capsule Collection | 473ml Sand Dune",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "12-C2900",
+   "name": "Urnex Cafiza 2 - Cleaning powder 900g",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "P0B150010FPD009",
+   "name": "Coconut Caramel Praline single wrapped I 15 kg bulk",
+   "reason": "kein Röstkaffee: Fremdware (FairAfric Pralinen)"
+  },
+  {
+   "sku": "P0B150010FPD004",
+   "name": "Hazelnut Praline single wrapped I 15 kg bulk",
+   "reason": "kein Röstkaffee: Fremdware (FairAfric Pralinen)"
+  },
+  {
+   "sku": "P0B150010FPD008",
+   "name": "Pistachio Pralines single wrapped I 15 kg bulk",
+   "reason": "kein Röstkaffee: Fremdware (FairAfric Pralinen)"
+  },
+  {
+   "sku": "53991",
+   "name": "KBG select Forest Green/Forest Green",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "70TAC017AA001",
+   "name": "Timemore Air Blower | zum Reinigen von Kaffeemühlen",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  },
+  {
+   "sku": "70TFP045AA001",
+   "name": "Timemore U French Press in schwarz (450ml)",
+   "reason": "kein Röstkaffee: Gerät"
+  },
+  {
+   "sku": "CAPCMSG12",
+   "name": "Fellow Thermobecher Carter Move Mug | Capsule Collection | 354ml Smoke Green",
+   "reason": "kein Röstkaffee: Zubehör/Verbrauchsmaterial"
+  }
+ ]
+}

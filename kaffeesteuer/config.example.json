@@ -1,0 +1,29 @@
+{
+  "rateCentsPerKg": 219,
+  "stamm": {
+    "firma": "Beispiel GmbH",
+    "rechtsform": "GmbH",
+    "land": "DE",
+    "plz": "10115",
+    "ort": "Berlin",
+    "strasse": "Musterstraße",
+    "hausnummer": "1",
+    "hza": "Hauptzollamt Berlin",
+    "email": "steuer@example.com",
+    "telefon": "0300000000",
+    "ansprechpartner": "Max Mustermann",
+    "ansprechpartnerEmail": "steuer@example.com",
+    "ansprechpartnerTelefon": "0300000000",
+    "unterschriftOrt": "Berlin",
+    "unternehmensnummer": "000000",
+    "dienststelle": "0000"
+  },
+  "mail": {
+    "firma": "Beispiel GmbH",
+    "from": "absender@example.com",
+    "to": ["hza@example.com", "steuer@example.com"],
+    "bccAlways": ["buchhaltung@example.com"],
+    "bccFirstRuns": { "address": "kontrolle@example.com", "runs": 5 },
+    "signature": ["Max Mustermann", "Beispiel GmbH · Musterstraße 1 · 10115 Berlin"]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "@borderhaus/kaffeesteuer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Kaffeesteuer-Modul (Formular 1807/1808) für dashboard.borderhaus.com: Lauf je Monat, Plausi-Checkliste, FMS-Ausgabe, Sheet, Mail, Lexware.",
+  "type": "module",
+  "engines": { "node": ">=22.18" },
+  "scripts": {
+    "test": "node --test \"test/**/*.test.ts\"",
+    "typecheck": "tsc -p tsconfig.json",
+    "run-month": "node bin/run-month.ts"
+  },
+  "dependencies": {
+    "exceljs": "^4.4.0",
+    "pdf-lib": "^1.17.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.7",
+    "typescript": "5.7.3"
+  }
+}

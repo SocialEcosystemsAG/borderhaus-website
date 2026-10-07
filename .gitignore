@@ -37,3 +37,8 @@ next-env.d.ts
 
 # sanity
 /sanity/dist
+
+# kaffeesteuer: private Stammdaten, Läufe und Assets nie committen
+/kaffeesteuer/node_modules
+/kaffeesteuer/private/
+/kaffeesteuer/runs/

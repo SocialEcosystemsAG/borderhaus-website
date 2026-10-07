@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml-data xmlns="http://www.lucom.com/ffw/xml-data-1.0.xsd">
+	<form>catalog://Unternehmen/vst/kaffee/1807</form>
+	<instance>
+		<datarow>
+			<element id="ID_USER">.anonymous</element>
+			<element id="1807_ansprechpartner">Max Mustermann</element>
+			<element id="1807_email">steuer@example.com</element>
+			<element id="1807_telefon">0300000000</element>
+			<element id="1807_k2">false</element>
+			<element id="1807_mon_steueranmeldung">01.08.1970 00:00:00</element>
+			<element id="1807_mon_steueranmeldung_jahr">01.01.2026 00:00:00</element>
+			<element id="1807_registrierkennzeichen">0012</element>
+			<element id="1807_registrierkennzeichen2">000000</element>
+			<element id="1807_registrierkennzeichen3">08</element>
+			<element id="1807_registrierkennzeichen4">2026</element>
+			<element id="1807_registrierkennzeichen5">0000</element>
+			<element id="1807_k5">false</element>
+			<element id="1807_k6">true</element>
+			<element id="1807_sonstiges">Nachmeldung Beispiel 1 kg. Details siehe Anlage.</element>
+			<element id="1807_ort">Berlin</element>
+			<element id="1807_land">DE</element>
+			<element id="1807_k22">true</element>
+			<element id="1807_k1">true</element>
+			<element id="name_firma_sb">Beispiel GmbH</element>
+			<element id="rechtsform_sb">GmbH</element>
+			<element id="land_sb">DE</element>
+			<element id="plz_de_sb">10115</element>
+			<element id="ort_sb">Berlin</element>
+			<element id="strasse_sb">Musterstraße</element>
+			<element id="haus_nr_sb">1</element>
+			<element id="e_mail_sb">steuer@example.com</element>
+			<element id="telefon_sb">0300000000</element>
+			<element id="1807_k4">true</element>
+			<element id="summe">1234.56</element>
+			<element id="gesamt">1234.56</element>
+			<element id="1807_dat">07.10.2026 00:00:00</element>
+			<element id="1807_k7j">false</element>
+			<element id="1807_k9j">true</element>
+			<element id="1807_k11j">false</element>
+			<element id="1807_k13j">false</element>
+			<element id="1807_k13n">true</element>
+			<element id="1807_k7n">true</element>
+			<element id="1807_k9n">false</element>
+			<element id="1807_k11n">true</element>
+			<element id="1807_k7n2">true</element>
+			<element id="1807_k9n2">true</element>
+			<element id="1807_k11n2">true</element>
+			<element id="1807_k3">false</element>
+			<element id="steuerb1b">1234.56</element>
+			<element id="hza">Hauptzollamt Berlin</element>
+			<element id="1807_dat_formatiert">07.10.2026</element>
+		</datarow>
+		<dataset id="betragszeile">
+			<datarow />
+			<datarow />
+			<datarow />
+			<datarow />
+			<datarow />
+			<datarow />
+			<datarow />
+			<datarow />
+			<datarow />
+			<datarow />
+		</dataset>
+	</instance>
+</xml-data>
+
