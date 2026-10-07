@@ -111,6 +111,6 @@ export async function buildSheet(i: SheetInput): Promise<{ xlsx: Uint8Array; tab
   t2.getCell(`G${q + 1}`).value = "Abgleich mit Tab 1 (Differenz muss 0 sein)";
   t2.getCell(`J${q + 1}`).value = { formula: `ROUND(J${q}-'${t1Name}'!${t1TotalCell},3)`, result: gramsToKg(tab2Grams - tab1Grams) };
 
-  const buf = await wb.xlsx.writeBuffer();
+  const buf = await wb.xlsx.writeBuffer({ zip: { compression: "DEFLATE", compressionOptions: { level: 9 } } } as ExcelJS.XlsxWriteOptions);
   return { xlsx: new Uint8Array(buf as ArrayBuffer), tab1Grams, tab2Grams, taxCents: totalTax };
 }
