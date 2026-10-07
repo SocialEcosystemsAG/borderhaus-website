@@ -127,17 +127,18 @@ export function runChecks(input: CheckInput): CheckResult[] {
     );
   }
 
-  // 4 Doppelmeldung gegen Historie (Paketnummer oder Auftrag+SKU)
+  // 4 Doppelmeldung gegen Historie
+  //    Paketdaten: Paketnummer schon gemeldet. Auftragsdaten: mehr gemeldet als bestellt
+  //    (Restmengen werden in compute.ts automatisch abgezogen).
   const earlier = history.filter((h) => h.month < mk);
   const dupes: string[] = [];
-  for (const p of counted) {
-    const hit = earlier.find(
-      (h) =>
-        (p.packageNumber && h.packageNumber && h.packageNumber === p.packageNumber) ||
-        (h.orderNumber === p.orderNumber && baseSku(h.sku) === baseSku(p.sku)),
-    );
-    if (hit) dupes.push(`${p.orderNumber} · ${p.sku} × ${p.quantity} schon gemeldet im Lauf ${hit.month} (${hit.sku} × ${hit.quantity})`);
+  for (const l of result.lines.filter((x) => x.status === "counted")) {
+    const pkgHit = l.packageNumber ? earlier.find((h) => h.packageNumber && h.packageNumber === l.packageNumber) : undefined;
+    if (pkgHit) dupes.push(`${l.orderNumber} · Paket ${l.packageNumber} schon gemeldet im Lauf ${pkgHit.month}`);
+    else if (l.orderedQuantity !== undefined && (l.reportedBefore ?? 0) + l.quantity > l.orderedQuantity)
+      dupes.push(`${l.orderNumber} · ${l.sku}: ${l.reportedBefore} gemeldet + ${l.quantity} jetzt > ${l.orderedQuantity} bestellt`);
   }
+  const auto = result.lines.filter((x) => x.status === "already-reported");
   out.push(
     check(
       4,
@@ -145,9 +146,9 @@ export function runChecks(input: CheckInput): CheckResult[] {
       "Keine Doppelmeldung",
       dupes.length ? "blocker" : "ok",
       dupes.length
-        ? "Position ist bereits in einem früheren Lauf gemeldet. Bei echter Teil-/Nachlieferung per Override mit Begründung bestätigen, sonst ausschließen."
-        : `Kein Paket und keine Auftrag/SKU-Kombination aus früheren Läufen (${earlier.length} Positionen Historie geprüft).`,
-      dupes,
+        ? "Position ist bereits in einem früheren Lauf gemeldet oder überschreitet die Auftragsmenge."
+        : `Keine Doppelmeldung gegen ${earlier.length} Positionen Historie. ${auto.length ? `${auto.length} bereits gemeldete Position(en) automatisch nicht erneut gezählt.` : ""}`.trim(),
+      [...dupes, ...auto.map((l) => `${l.orderNumber} · ${l.sku} × ${l.quantity}: ${l.note}`)],
     ),
   );
 
@@ -257,11 +258,12 @@ export function runChecks(input: CheckInput): CheckResult[] {
     const orders = [...new Set(late.map((p) => p.orderNumber))].map((o) => {
       const l = result.lines.find((x) => x.orderNumber === o)!;
       const g = late.filter((p) => p.orderNumber === o).reduce((s, p) => s + p.grams, 0);
-      const why = l.shippedStatus === "partially_shipped" ? "TEILVERSAND laut Zoho, ohne Paketdaten voll gezählt" : `Auftrag vom ${l.orderDate}`;
+      const why = l.shippedStatus === "partially_shipped" ? `Teilversand, ${l.note ?? "Paketinhalt"}` : `Auftrag vom ${l.orderDate}`;
       return `${o} · ${why} · Versand ${l.shipDate} (${l.shipDateSource}) · ${formatKgDe(g)} kg`;
     });
-    out.push(check(11, "late", "Teil- und Nachlieferungen älterer Aufträge", orders.length ? "warning" : "ok",
-      orders.length ? "Nur das Paket im Monat zählt. Bei Teilversand die versendete Menge prüfen." : "Keine.", orders));
+    const rest = result.lines.filter((l) => l.status === "counted" && l.note?.startsWith("Restmenge")).map((l) => `${l.orderNumber} · ${l.sku}: ${l.note}`);
+    out.push(check(11, "late", "Teil- und Nachlieferungen älterer Aufträge", orders.length || rest.length ? "warning" : "ok",
+      orders.length || rest.length ? "Nur das Paket im Monat zählt. Bereits gemeldete Mengen werden abgezogen, nur die Restmenge zählt." : "Keine.", [...orders, ...rest]));
   }
 
   // 12 Sales Returns
@@ -332,6 +334,26 @@ export function runChecks(input: CheckInput): CheckResult[] {
   out.push(check(18, "open-items", "Offene Punkte aus Vormonaten", input.openItems.length ? "warning" : "ok",
     input.openItems.length ? "Klärung im Ausnahmefeld erfassen." : "Keine.",
     input.openItems.map((o) => `${o.key}: ${o.text} (seit ${o.since})`)));
+
+  // 19 Teilversand ohne Paketinhalt (nur Auftragsdaten)
+  {
+    const pu = result.lines.filter((l) => l.status === "partial-unknown");
+    const byOrder = [...new Set(pu.map((l) => l.orderNumber))].map((o) => {
+      const ls = pu.filter((l) => l.orderNumber === o);
+      return `${o} (${ls[0].customerName}, Versand ${ls[0].shipDate}): bestellt ${ls.map((l) => `${l.quantity}× ${l.sku}`).join(", ")}`;
+    });
+    out.push(check(19, "partial", "Teilversand: versendete Menge belegt", pu.length ? "blocker" : "ok",
+      pu.length ? "Teilversand ohne Paketinhalt. Gemeldet wird nur, was wirklich rausging: Paketinhalt aus Zoho (Paket des Monats) als Menge erfassen." : "Kein offener Teilversand.",
+      byOrder));
+  }
+
+  // 20 Mandanten außerhalb der Anmeldung (Information)
+  {
+    const oos = result.lines.filter((l) => l.status === "out-of-scope" && l.country === "DE");
+    const names = [...new Set(oos.map((l) => `${l.customerName}: ${l.note}`))];
+    out.push(check(20, "scope", "Mandanten außerhalb der Anmeldung", "ok",
+      oos.length ? `${new Set(oos.map((l) => l.orderNumber)).size} Aufträge mit DE-Adresse nicht berücksichtigt.` : "Keine.", names));
+  }
 
   return out;
 }

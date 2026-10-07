@@ -9,7 +9,7 @@ import { computeMonth } from "../src/compute.ts";
 import { runChecks } from "../src/checks.ts";
 import { DEFAULT_MAPPING, withExclusions } from "../src/sku-mapping.ts";
 import { REFERENCE_CROSSES } from "../src/fms1807.ts";
-import type { HistoryEntry, Override } from "../src/types.ts";
+import type { HistoryEntry } from "../src/types.ts";
 
 const dir = new URL("../private/fixtures/", import.meta.url);
 const has = ["2026-08/details.jsonl", "2026-08/expected.json", "so_list.json"].every((f) => existsSync(new URL(f, dir)));
@@ -28,14 +28,15 @@ test("Regression August 2026: Zoho ergibt Aufträge / Positionen / kg der einger
     { month: "2026-06", orderNumber: "SO-00941", sku: "CA-R-004_4", quantity: 8, grams: 32_000 },
     { month: "2026-07", orderNumber: "SO-00959", sku: "CA-R-002_4", quantity: 6, grams: 24_000 },
   ];
-  const raw = computeMonth(ym, snapshot, mapping, [], 219);
+  // Restmengen-Logik: in Vormonaten gemeldete Mengen werden automatisch abgezogen
+  const r = computeMonth(ym, snapshot, mapping, [], 219, { history });
   const checks = runChecks({
     ym,
     today: "2026-09-01",
     rateCentsPerKg: 219,
     ids: { unternehmensnummer: "123456", dienststelle: "9999" },
     snapshot,
-    result: raw,
+    result: r,
     history,
     outputs: null,
     form: { rkz: null, crosses: null, referenceCrosses: REFERENCE_CROSSES, fmsErrors: null, pdfPresent: false, signaturePresent: false },
@@ -43,19 +44,14 @@ test("Regression August 2026: Zoho ergibt Aufträge / Positionen / kg der einger
     approved: false,
   });
   const dup = checks.find((c) => c.key === "duplicate")!;
-  assert.equal(dup.status, "blocker");
-  assert.equal(dup.details.length, 3, dup.details.join("\n"));
+  assert.equal(dup.status, "ok", dup.details.join("\n"));
+  assert.deepEqual(
+    r.lines.filter((l) => l.status === "already-reported").map((l) => `${l.orderNumber}|${l.sku}`).sort(),
+    ["SO-00941|CA-R-002_4", "SO-00941|CA-R-004_4", "SO-00959|CA-R-002_4"],
+  );
   assert.equal(checks.find((c) => c.key === "sku")!.status, "ok", "alle SKUs eingeordnet");
   assert.equal(checks.find((c) => c.key === "country")!.status, "ok", "Deutschland/Germany/DE erkannt");
 
-  // Auflösung der Doppelmeldungen per Override mit Begründung
-  const at = "2026-10-07";
-  const overrides: Override[] = [
-    { id: "a", action: "exclude", orderNumber: "SO-00941", sku: "CA-R-002_4", reason: "Teil 1 im Juni gemeldet", user: "test", at, source: "manual" },
-    { id: "b", action: "exclude", orderNumber: "SO-00941", sku: "CA-R-004_4", reason: "Teil 1 im Juni gemeldet", user: "test", at, source: "manual" },
-    { id: "c", action: "exclude", orderNumber: "SO-00959", reason: "im Juli gemeldet", user: "test", at, source: "manual" },
-  ];
-  const r = computeMonth(ym, snapshot, mapping, overrides, 219);
   const expected = JSON.parse(readFileSync(new URL("2026-08/expected.json", dir), "utf8"));
   assert.equal(r.totals.orders, expected.orders);
   assert.equal(r.totals.positions, expected.positions);

@@ -14,6 +14,8 @@ export type RunConfig = {
   stamm: Stammdaten;
   mail: MailConfig;
   rateCentsPerKg: number;
+  /** Mandanten, deren Ware nie in die Anmeldung gehört (mit Begründung). */
+  excludedCustomers?: { name: string; reason: string }[];
 };
 
 export type RunInput = {
@@ -34,7 +36,10 @@ export type RunInput = {
 
 export async function buildRun(i: RunInput) {
   const rkz = registrierkennzeichen(i.ym, i.config.stamm);
-  const result = computeMonth(i.ym, i.snapshot, i.mapping, i.overrides, i.config.rateCentsPerKg);
+  const result = computeMonth(i.ym, i.snapshot, i.mapping, i.overrides, i.config.rateCentsPerKg, {
+    history: i.history,
+    excludedCustomers: i.config.excludedCustomers,
+  });
   const skuRows = aggregateBySku(result.positions);
   const sheet = await buildSheet({
     ym: i.ym,

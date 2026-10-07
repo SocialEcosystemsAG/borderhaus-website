@@ -4,7 +4,7 @@
 import { monthRange } from "./calendar.ts";
 import { normalizeCountry } from "./country.ts";
 import { baseSku, kitComponents, resolveSku, type SkuMapping } from "./sku-mapping.ts";
-import type { Override, Position, RunTotals, SourceSnapshot, YearMonth } from "./types.ts";
+import type { HistoryEntry, Override, Position, RunTotals, SourceSnapshot, YearMonth } from "./types.ts";
 import { kgToGrams, taxCents } from "./units.ts";
 
 export type LineStatus =
@@ -15,7 +15,11 @@ export type LineStatus =
   | "swiss"
   | "unknown-sku"
   | "kit-component"
-  | "override-excluded";
+  | "override-excluded"
+  | "out-of-scope"
+  | "already-reported"
+  | "partial-unknown"
+  | "not-in-package";
 
 export type LineOutcome = {
   orderNumber: string;
@@ -36,6 +40,16 @@ export type LineOutcome = {
   kgPerUnit?: number;
   grams?: number;
   note?: string;
+  /** Auftragsmenge laut Zoho und bereits in Vormonaten gemeldete Menge (Restmengen-Logik). */
+  orderedQuantity?: number;
+  reportedBefore?: number;
+};
+
+/** Kontext aus Historie und Mandanten-Scope. */
+export type ComputeContext = {
+  history?: HistoryEntry[];
+  /** Mandanten, deren Ware nie in die Anmeldung gehört (z. B. eigene Versteuerung). */
+  excludedCustomers?: { name: string; reason: string }[];
 };
 
 export type ComputeResult = {
@@ -51,12 +65,23 @@ export function computeMonth(
   mapping: SkuMapping,
   overrides: Override[],
   rateCentsPerKg: number,
+  ctx: ComputeContext = {},
 ): ComputeResult {
   const { from, to } = monthRange(ym);
   const lines: LineOutcome[] = [];
   const applied = new Set<string>();
+  const monthKey = from.slice(0, 7);
+  // Auftragsdaten ohne Pakete: Teilversand nur mit Paketinhalt, Restmengen gegen Historie
+  const orderLevel = snapshot.source === "zoho-books-salesorders";
+  const reported = new Map<string, number>();
+  for (const h of ctx.history ?? []) {
+    if (h.month >= monthKey) continue;
+    const k = `${h.orderNumber}|${baseSku(h.sku)}`;
+    reported.set(k, (reported.get(k) ?? 0) + h.quantity);
+  }
 
   for (const order of snapshot.orders) {
+    const scope = ctx.excludedCustomers?.find((c) => c.name.toLowerCase() === order.customerName.toLowerCase());
     const countryOverride = overrides.find((o) => o.action === "set_country" && o.orderNumber === order.orderNumber);
     if (countryOverride) applied.add(countryOverride.id);
     const country =
@@ -98,6 +123,10 @@ export function computeMonth(
         const rec = (status: LineStatus, quantity: number, extra: Partial<LineOutcome> = {}) =>
           lines.push({ ...base, sku: line.sku, name: line.name, quantity, status, ...extra });
 
+        if (scope) {
+          rec("out-of-scope", qty, { note: scope.reason });
+          continue;
+        }
         if (!country.ok) {
           rec("country-unknown", qty, { note: `Länderwert nicht zuordenbar: ${base.countryRaw}` });
           continue;
@@ -158,13 +187,40 @@ export function computeMonth(
             o.orderNumber === order.orderNumber &&
             baseSku(o.sku) === baseSku(line.sku),
         );
+        const anySetQty = overrides.some((o) => o.action === "set_quantity" && o.orderNumber === order.orderNumber);
+        const ordered = qty;
+        const before = reported.get(`${order.orderNumber}|${baseSku(line.sku)}`) ?? 0;
+        const kg = { kgPerUnit: res.kgPerUnit, orderedQuantity: ordered, reportedBefore: before };
         let note: string | undefined;
-        if (setQty && setQty.action === "set_quantity") {
+        if (orderLevel && order.shippedStatus === "partially_shipped") {
+          // Nur melden, was wirklich rausging: Paketinhalt muss feststehen
+          if (setQty && setQty.action === "set_quantity") {
+            applied.add(setQty.id);
+            qty = setQty.quantity;
+            note = `Teilversand, Paketinhalt: ${qty} von ${ordered} (${setQty.reason})`;
+          } else if (anySetQty) {
+            rec("not-in-package", qty, { ...kg, note: "Teilversand: nicht im versendeten Paket" });
+            continue;
+          } else {
+            rec("partial-unknown", qty, { ...kg, note: "Teilversand ohne Paketinhalt: nicht gezählt, bis die versendete Menge feststeht" });
+            continue;
+          }
+        } else if (setQty && setQty.action === "set_quantity") {
           applied.add(setQty.id);
           note = `Menge ${qty} → ${setQty.quantity}: ${setQty.reason}`;
           qty = setQty.quantity;
+        } else if (orderLevel && before > 0) {
+          // Restmenge: in Vormonaten bereits gemeldete Menge dieses Auftrags abziehen
+          const rest = Math.max(0, qty - before);
+          if (rest === 0) {
+            rec("already-reported", qty, { ...kg, note: `bereits in Vormonaten gemeldet (${before} von ${ordered})` });
+            continue;
+          }
+          note = `Restmenge ${rest} von ${ordered} (${before} bereits gemeldet)`;
+          qty = rest;
         }
-        rec("counted", qty, { kgPerUnit: res.kgPerUnit, grams: qty * kgToGrams(res.kgPerUnit), note });
+        if (qty <= 0) continue;
+        rec("counted", qty, { ...kg, grams: qty * kgToGrams(res.kgPerUnit), note });
       }
     }
   }
